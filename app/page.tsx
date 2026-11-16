@@ -48,6 +48,7 @@ export default function Home() {
         <nav className={menuOpen ? "nav-links open" : "nav-links"}>
           <a href="#explore" onClick={() => setMenuOpen(false)}>Explore</a>
           <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
+          <a href="/portals" onClick={() => setMenuOpen(false)}>Dashboards</a>
           <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
         </nav>
         <a className="header-cta" href="#explore">Start learning <ArrowRight size={16} /></a>
