@@ -1,2 +1,7 @@
 import PortalDashboard from "../components/portal-dashboard";
-export default function StudentPage(){return <PortalDashboard role="student"/>;}
+import { requireRoles } from "@/lib/supabase/guards";
+
+export default async function StudentPage() {
+  await requireRoles(["student", "teacher", "admin"]);
+  return <PortalDashboard role="student" />;
+}
