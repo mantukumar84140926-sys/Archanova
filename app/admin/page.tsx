@@ -1,2 +1,7 @@
 import PortalDashboard from "../components/portal-dashboard";
-export default function AdminPage(){return <PortalDashboard role="admin"/>;}
+import { requireRoles } from "@/lib/supabase/guards";
+
+export default async function AdminPage() {
+  await requireRoles(["admin"]);
+  return <PortalDashboard role="admin" />;
+}
