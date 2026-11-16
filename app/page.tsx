@@ -14,7 +14,7 @@ const resources = [
   { title: "Class 12 Learning Hub", type: "School", detail: "Board preparation made simpler", tag: "Coming soon", icon: GraduationCap },
   { title: "College Study Corner", type: "College", detail: "Study material for college learners", tag: "Coming soon", icon: BookMarked },
   { title: "Competitive Exam Prep", type: "Competitive Exams", detail: "Build concepts and practice daily", tag: "Coming soon", icon: Target },
-  { title: "Daily MCQ Practice", type: "All", detail: "Test your knowledge one question at a time", tag: "Coming soon", icon: ClipboardCheck },
+  { title: "Daily MCQ Practice", type: "All", detail: "Test your knowledge one question at a time", tag: "Try sample", icon: ClipboardCheck },
   { title: "Video Lessons", type: "All", detail: "Learn difficult topics with simple explainers", tag: "Coming soon", icon: PlayCircle }
 ];
 
@@ -83,7 +83,7 @@ export default function Home() {
         </div>
         <div className="filter-row">{categories.map((category) => <button key={category} className={active === category ? "filter active" : "filter"} onClick={() => setActive(category)}>{category}</button>)}</div>
         <div className="resource-grid">
-          {visibleResources.map((item) => { const Icon = item.icon; return <article className="resource-card" key={item.title}><div className="resource-icon"><Icon size={23} /></div><span className="coming-tag">{item.tag}</span><h3>{item.title}</h3><p>{item.detail}</p><a href="#join" className="text-link">Explore path <ChevronRight size={16} /></a></article>; })}
+          {visibleResources.map((item) => { const Icon = item.icon; return <article className="resource-card" key={item.title}><div className="resource-icon"><Icon size={23} /></div><span className="coming-tag">{item.tag}</span><h3>{item.title}</h3><p>{item.detail}</p><a href={item.title === "Daily MCQ Practice" ? "/practice" : "#join"} className="text-link">{item.title === "Daily MCQ Practice" ? "Try demo" : "Explore path"} <ChevronRight size={16} /></a></article>; })}
           {visibleResources.length === 0 && <div className="empty-state">No matching learning paths yet. Try another search.</div>}
         </div>
       </section>
