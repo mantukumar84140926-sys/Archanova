@@ -15,7 +15,7 @@ async function isSchoolLeader(admin:SupabaseClient,schoolId:string,userId:string
  const {data,error}=await admin.from("school_memberships").select("role,status").eq("school_id",schoolId).eq("user_id",userId).maybeSingle();
  return !error&&data?.status==="active"&&["school_admin","principal"].includes(data.role);
 }
-async function findUser(admin:any,email:string){
+async function findUser(admin:SupabaseClient,email:string){
  for(let page=1;page<=20;page++){const {data,error}=await admin.auth.admin.listUsers({page,perPage:1000});if(error)throw error;const user=data.users.find((u)=>u.email?.toLowerCase()===email);if(user)return user;if(data.users.length<1000)break;}
  return null;
 }
