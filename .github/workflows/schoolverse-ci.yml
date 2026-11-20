@@ -4,7 +4,8 @@ on:
   push:
     branches: [schoolverse-foundation]
     paths:
-      - "app/schoolverse/**"\n      - "app/api/schoolverse/**"
+      - "app/schoolverse/**"
+      - "app/api/schoolverse/**"
       - "lib/supabase/**"
       - "middleware.ts"
       - "package.json"
@@ -14,6 +15,7 @@ on:
     branches: [schoolverse-foundation]
     paths:
       - "app/schoolverse/**"
+      - "app/api/schoolverse/**"
       - "lib/supabase/**"
       - "middleware.ts"
       - "package.json"
