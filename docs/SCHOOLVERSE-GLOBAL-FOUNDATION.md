@@ -6,7 +6,10 @@
 - School access: free; no paid school plans or mandatory upgrades for the current product decision
 - First client: responsive website
 - Later client: Android app using the same backend
-- Company identity: undecided; keep company/legal branding configurable and do not hard-code an owner name
+- Parent brand: RITEX
+- Product brand: SCHOOLVERSE
+- Public attribution: “A RITEX product”
+- Keep legal-entity details configurable until company registration and trademark checks are completed; do not imply registration or legal clearance
 
 ## Tenant model
 Use a shared PostgreSQL database with strict row-level tenant isolation for the initial stage. Every tenant-owned record must carry `school_id`. A user can belong to multiple schools through `school_memberships`. The active school context is resolved from a verified membership, never trusted from a client-provided school ID alone.
