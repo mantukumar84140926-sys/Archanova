@@ -52,7 +52,7 @@ export async function POST(request: Request) {
   const { data: membership, error: membershipError } = await admin
     .from("school_memberships").select("role,status")
     .eq("school_id", schoolId).eq("user_id", user.id).eq("status", "active")
-    .in("role", ["school_admin", "accountant"]).maybeSingle();
+    .in("role", ["school_admin", "accountant"]).limit(1).maybeSingle();
   if (membershipError || !membership) {
     return json({ error: "Only an active school administrator or accountant can record payments." }, 403);
   }
