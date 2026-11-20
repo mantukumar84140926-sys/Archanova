@@ -32,7 +32,11 @@ RLS is enabled on all application tables. Membership provisioning and payment re
 - `/api/schoolverse/provision`: allowlisted platform-admin API; creates school and first school-admin membership
 - `/schoolverse/school/[slug]/[role]`: role-aware school workspace
 - `/schoolverse/school/[slug]/[role]/settings`: school profile, country, currency, locale and timezone configuration
-- `/schoolverse/school/[slug]/[role]/students`: student records and admission with class, section, DOB and contact fields\n- `/schoolverse/school/[slug]/[role]/students/accounts`: student login invitations and account linking\n- `/api/schoolverse/students/link-account`: server-side student account invitation and linking\n- `/schoolverse/school/[slug]/[role]/students/guardians`: guardian invitations and school-admin relationship verification\n- `/api/schoolverse/students/guardians`: server-side guardian invitation and verification API
+- `/schoolverse/school/[slug]/[role]/students`: student records and admission with class, section, DOB and contact fields
+- `/schoolverse/school/[slug]/[role]/students/accounts`: student login invitations and account linking
+- `/api/schoolverse/students/link-account`: server-side student account invitation and linking
+- `/schoolverse/school/[slug]/[role]/students/guardians`: guardian invitations and school-admin relationship verification
+- `/api/schoolverse/students/guardians`: server-side guardian invitation and verification API
 - `/schoolverse/school/[slug]/[role]/staff`: staff directory, invitations and teaching assignments
 - `/api/schoolverse/staff/link-account`: verified administrator-only staff invitation/account linking
 - `/schoolverse/school/[slug]/[role]/attendance`: attendance marking and review
@@ -66,4 +70,4 @@ Configure Supabase Auth Site URL, redirect allowlist and email delivery after th
 
 ## Verification
 
-GitHub Actions runs `npm install`, `npm run lint` and `npm run build` for this branch. Check the latest workflow run before release. Supabase security and health advisors must be re-run after final migrations. Performance INFO notices for unused indexes may occur while tables are empty.
+GitHub Actions runs `npm install`, `npm run lint` and `npm run build` for this branch. The latest code CI run passed both lint and build. Supabase security and health advisor checks returned no findings. Performance advisor reports only unused-index INFO findings because the new tables have not accumulated production data yet.
