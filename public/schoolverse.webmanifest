@@ -1,0 +1,16 @@
+{
+  "id": "/schoolverse",
+  "name": "SCHOOLVERSE — A RITEX Product",
+  "short_name": "SCHOOLVERSE",
+  "description": "School management for administrators, teachers, students and parents.",
+  "start_url": "/schoolverse",
+  "scope": "/schoolverse/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#101a2d",
+  "theme_color": "#101a2d",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "/schoolverse-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
