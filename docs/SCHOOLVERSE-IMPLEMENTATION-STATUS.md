@@ -26,11 +26,11 @@ RLS is enabled on all application tables. Membership provisioning and payment re
 - `/schoolverse/platform`: private RITEX application review and school provisioning UI
 - `/api/schoolverse/provision`: allowlisted platform-admin API; creates school and first school-admin membership
 - `/schoolverse/school/[slug]/[role]`: role-aware school workspace
-- `/schoolverse/school/[slug]/[role]/students`: student records and admission
+- `/schoolverse/school/[slug]/[role]/students`: student records and admission with class, section, DOB and contact fields\n- `/schoolverse/school/[slug]/[role]/students/guardians`: guardian invitations and school-admin relationship verification\n- `/api/schoolverse/students/guardians`: server-side guardian invitation and verification API
 - `/schoolverse/school/[slug]/[role]/staff`: staff directory, invitations and teaching assignments
 - `/api/schoolverse/staff/link-account`: verified administrator-only staff invitation/account linking
 - `/schoolverse/school/[slug]/[role]/attendance`: attendance marking and review
-- `/schoolverse/school/[slug]/[role]/academics`: classes and sections
+- `/schoolverse/school/[slug]/[role]/academics`: academic years, current-year selection, classes and sections
 - `/schoolverse/school/[slug]/[role]/timetable`: weekly periods, teachers, sections and database conflict protection
 - `/schoolverse/school/[slug]/[role]/homework`: class assignments with teacher assignment permissions
 - `/schoolverse/school/[slug]/[role]/notices`: audience-filtered school notices
