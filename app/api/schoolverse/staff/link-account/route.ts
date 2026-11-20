@@ -10,12 +10,12 @@ export async function POST(request:Request){
  if(authError||!actor||!actor.email_confirmed_at)return json({error:"Your verified sign-in could not be confirmed."},401);
  const body=await request.json().catch(()=>null) as {schoolId?:string;staffId?:string;email?:string;role?:string}|null;
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
- const email=(body?.email??"").trim().toLowerCase();const role=body?.role??"teacher";
- if(!body||!uuid.test(body.schoolId??"")||!uuid.test(body.staffId??"")||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||!["teacher","accountant","principal"].includes(role))return json({error:"Provide a valid staff record, email and role."},400);
+ const email=(body?.email??"").trim().toLowerCase();const role=body?.role??"teacher";const schoolId=body?.schoolId??"",staffId=body?.staffId??"";
+ if(!body||!uuid.test(schoolId)||!uuid.test(staffId)||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||!["teacher","accountant","principal"].includes(role))return json({error:"Provide a valid staff record, email and role."},400);
  const admin=createClient(url,secretKey,{auth:{persistSession:false,autoRefreshToken:false}});
- const {data:membership,error:membershipError}=await admin.from("school_memberships").select("role,status").eq("school_id",body.schoolId).eq("user_id",actor.id).maybeSingle();
+ const {data:membership,error:membershipError}=await admin.from("school_memberships").select("role,status").eq("school_id",schoolId).eq("user_id",actor.id).maybeSingle();
  if(membershipError||!membership||membership.status!=="active"||!["school_admin","principal"].includes(membership.role))return json({error:"Only an active school administrator or principal can invite staff."},403);
- const {data:staff,error:staffError}=await admin.from("staff").select("id,school_id,auth_user_id,email,first_name,last_name").eq("id",body.staffId).eq("school_id",body.schoolId).maybeSingle();
+ const {data:staff,error:staffError}=await admin.from("staff").select("id,school_id,auth_user_id,email,first_name,last_name").eq("id",staffId).eq("school_id",schoolId).maybeSingle();
  if(staffError||!staff)return json({error:"Staff record not found in this school."},404);
  if(staff.auth_user_id)return json({error:"This staff record is already linked to a login account."},409);
  if(staff.email&&staff.email.toLowerCase()!==email)return json({error:"The invitation email must match the staff record email. Update the staff record first."},400);
@@ -32,15 +32,15 @@ export async function POST(request:Request){
   if(error||!data.user)return json({error:error?.message??"Could not send the staff invitation."},400);
   invitedUser={id:data.user.id};
  }
- const {data:existing,error:existingError}=await admin.from("school_memberships").select("role,status").eq("school_id",body.schoolId).eq("user_id",invitedUser.id).maybeSingle();
+ const {data:existing,error:existingError}=await admin.from("school_memberships").select("role,status").eq("school_id",schoolId).eq("user_id",invitedUser.id).maybeSingle();
  if(existingError)return json({error:"Could not verify the user's school membership."},500);
  if(existing&&existing.role!==role)return json({error:"This account already has a different role in this school. A school administrator must resolve the existing membership first."},409);
  if(existing&&existing.status!=="active")return json({error:"This account has a non-active membership. Reactivate it through the trusted admin process."},409);
  if(!existing){
-  const {error}=await admin.from("school_memberships").insert({school_id:body.schoolId,user_id:invitedUser.id,role,status:"active"});
+  const {error}=await admin.from("school_memberships").insert({school_id:schoolId,user_id:invitedUser.id,role,status:"active"});
   if(error)return json({error:"The invitation was created but membership could not be assigned. Retry linking this staff account."},500);
  }
- const {error:linkError}=await admin.from("staff").update({auth_user_id:invitedUser.id,email}).eq("id",staff.id).eq("school_id",body.schoolId);
+ const {error:linkError}=await admin.from("staff").update({auth_user_id:invitedUser.id,email}).eq("id",staff.id).eq("school_id",schoolId);
  if(linkError)return json({error:"The account was invited but staff linking failed. Retry linking this staff account."},500);
  return json({linked:true,invited:!existing,role,email},200);
 }
