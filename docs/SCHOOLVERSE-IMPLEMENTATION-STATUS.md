@@ -1,60 +1,63 @@
-# SCHOOLVERSE implementation and deployment notes
+# SCHOOLVERSE implementation and release status
 
-## Dedicated backend
+## Product and infrastructure
 
-- Supabase project: SCHOOLVERSE
-- Project ref: `aemrcfitcndgmeabfdpn`
-- Region: `ap-south-1` (Mumbai)
-- Project status at last verification: `ACTIVE_HEALTHY`
+- Parent brand: RITEX
+- Product: SCHOOLVERSE
+- Supabase project: `aemrcfitcndgmeabfdpn`
+- Region: `ap-south-1` (Mumbai), Free plan
 - Project URL: `https://aemrcfitcndgmeabfdpn.supabase.co`
-- Frontend publishable key is available in the branch's `.env.example`. It is designed to be public; never put a service-role key in browser code.
+- Frontend publishable key is configured in `.env.example`; it is safe for browser use with RLS.
+- Work is isolated on `schoolverse-foundation`. AJEDUVERSE `main` and its production deployment are not modified.
 
-## Current database foundation
+## Database foundation
 
-The project currently has 18 public application tables: schools, school_memberships, academic_years, classes, sections, students, staff, student_guardians, attendance, fee_invoices, fee_payments, audit_logs, school_applications, timetable_entries, homework, school_notices, exams and exam_results.
+19 public application tables are present:
+`schools`, `school_memberships`, `academic_years`, `classes`, `sections`, `students`, `staff`, `student_guardians`, `attendance`, `fee_invoices`, `fee_payments`, `audit_logs`, `school_applications`, `timetable_entries`, `homework`, `school_notices`, `exams`, `exam_results`, and `teaching_assignments`.
 
-RLS is enabled on all 18 tables. The latest Supabase security and health advisor checks returned no findings. Performance advisors currently show only unused-index INFO notices because the new tables are empty; foreign-key index findings and overlapping permissive SELECT policies were corrected. Fee payment writes and audit-log access are intentionally server-only at this stage. Operational write policies are scoped to school roles; membership provisioning remains a trusted platform operation and is not exposed to public signup.
+RLS is enabled on all application tables. Membership provisioning and payment recording are server-only operations. Public signup cannot assign school membership or privileged roles. School provisioning RPC execution is restricted to `service_role`. Teacher access to students, attendance and homework is restricted to linked teaching assignments. Timetable database exclusion constraints prevent class/teacher time overlaps. Fee payment recording is transactional, idempotent, prevents overpayment, updates invoice status and creates a receipt number plus audit event.
 
-## Current web routes
+## Implemented routes
 
-- `/schoolverse`: public product landing page
-- `/schoolverse/signup`: email/password account registration
-- `/schoolverse/login`: email/password sign-in
-- `/schoolverse/dashboard`: lists active school memberships for the signed-in user
-- `/schoolverse/school/[slug]/[role]`: verified role workspace
-- `/schoolverse/school/[slug]/[role]/students`: live student list and admission form for school admins/principals\n- `/schoolverse/school/[slug]/[role]/staff`: staff directory and employee record creation for school admins/principals
+- `/schoolverse`: product landing page
+- `/schoolverse/signup`, `/schoolverse/login`: email/password authentication
+- `/schoolverse/dashboard`: school memberships and application status
+- `/schoolverse/apply`: authenticated school onboarding application
+- `/schoolverse/platform`: private RITEX application review and school provisioning UI
+- `/api/schoolverse/provision`: allowlisted platform-admin API; creates school and first school-admin membership
+- `/schoolverse/school/[slug]/[role]`: role-aware school workspace
+- `/schoolverse/school/[slug]/[role]/students`: student records and admission
+- `/schoolverse/school/[slug]/[role]/staff`: staff directory, invitations and teaching assignments
+- `/api/schoolverse/staff/link-account`: verified administrator-only staff invitation/account linking
+- `/schoolverse/school/[slug]/[role]/attendance`: attendance marking and review
+- `/schoolverse/school/[slug]/[role]/academics`: classes and sections
+- `/schoolverse/school/[slug]/[role]/timetable`: weekly periods, teachers, sections and database conflict protection
+- `/schoolverse/school/[slug]/[role]/homework`: class assignments with teacher assignment permissions
+- `/schoolverse/school/[slug]/[role]/notices`: audience-filtered school notices
+- `/schoolverse/school/[slug]/[role]/fees`: invoices, manual payment recording and receipt list
+- `/schoolverse/school/[slug]/[role]/fees/receipt/[id]`: printable receipt / save as PDF
+- `/api/schoolverse/fees/payments`: authenticated server-side payment recording
+- `/schoolverse/school/[slug]/[role]/exams`: exam sessions, marks and published results
 
-A signup creates an authentication account only. It does not allow a person to create a school, choose a privileged role, or self-assign a school membership. A trusted school/platform administrator must provision the school and membership before the user can access school data.
+## Server environment required before end-to-end use
 
-## Required hosting configuration
-
-Configure the following variables in the SCHOOLVERSE Vercel project (not in the AJEDUVERSE project):
-
+Set these only in the separate SCHOOLVERSE hosting environment:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SECRET_KEY` (server-only; never expose to browser code)
+- `RITEX_PLATFORM_ADMIN_EMAILS` (comma-separated verified platform administrator email allowlist)
 
-Use the values in `.env.example`. The publishable key is safe for browser use when RLS is correctly enforced. Never add `SUPABASE_SERVICE_ROLE_KEY` to any `NEXT_PUBLIC_*` variable or client-side file.
+Configure Supabase Auth Site URL, redirect allowlist and email delivery after the SCHOOLVERSE domain is selected. Staff invitations use Supabase Auth email delivery. Payment recording currently records payments already received by the school (cash/UPI/bank/card/cheque); no third-party payment gateway is connected.
 
-## Supabase Auth URL configuration
+## Release blockers / external dependencies
 
-After the SCHOOLVERSE web domain is assigned, configure Supabase Authentication URL settings:
+1. The hosting account previously returned HTTP 403 when creating a separate Vercel project. Deployment is intentionally deferred; do not use the AJEDUVERSE Vercel project.
+2. The verified RITEX platform-admin email allowlist and server-only Supabase secret key must be entered in the SCHOOLVERSE hosting environment before platform provisioning, staff invitations and server-side payment recording can run.
+3. Supabase Auth redirect URLs and production email delivery need final domain configuration.
+4. Full end-to-end role tests require test accounts for each role (school admin, principal, teacher, accountant, student and verified parent/guardian).
+5. A real payment gateway requires the school's merchant account, provider credentials, webhook signing secret and reconciliation rules. The current manual receipt workflow must not be represented as online payment processing.
+6. Production launch still requires cross-school authorization tests, child-data privacy/legal review for each target country, backup/restore rehearsal, monitoring, rate limits and operational support procedures.
 
-- Site URL: the final SCHOOLVERSE domain.
-- Redirect allowlist: the final domain's `/schoolverse/login?verified=1` callback and the local development callback `http://localhost:3000/schoolverse/login?verified=1`.
-- Enable email/password authentication and configure SMTP/email confirmation according to the launch requirements.
+## Verification
 
-Do not use the AJEDUVERSE callback domain unless it is intentionally assigned to SCHOOLVERSE.
-
-## Deployment status and safety
-
-The code is committed to `schoolverse-foundation`. The AJEDUVERSE `main` branch and existing production URL have not been changed by this work.
-
-A separate Vercel project was not created: the connected Vercel account returned HTTP 403 (forbidden) for project creation. No deployment URL or successful build is claimed. Connect this repository/branch to a Vercel project with project-creation permission, set the environment variables above, and deploy the `schoolverse-foundation` branch. The route is served under `/schoolverse`.
-
-## Remaining launch blockers
-
-1. Create a trusted platform-owner provisioning path for schools and first school-admin memberships. Do not make this a public self-service role assignment.
-2. Configure Supabase Auth redirect URLs and email delivery.
-3. Connect a Vercel project and deploy the branch; then run a real build and smoke test.
-4. Add assigned-class constraints for teachers, more granular student/parent data access, and automated cross-school authorization tests before production onboarding.
-5. Complete the remaining modules (attendance UI, timetable, homework, notices, exams, payments/receipts, parent/student experiences) and jurisdiction-specific child-data privacy review.
+GitHub Actions runs `npm install`, `npm run lint` and `npm run build` for this branch. Check the latest workflow run before release. Supabase security and health advisors must be re-run after final migrations. Performance INFO notices for unused indexes may occur while tables are empty.
