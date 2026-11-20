@@ -97,3 +97,32 @@ export async function POST(request: Request) {
   }
   return json({ schoolId: data }, 201);
 }
+
+export async function PATCH(request: Request) {
+  const context = await getPlatformAdmin(request);
+  if ("response" in context) return context.response;
+  const body = await request.json().catch(() => null) as { applicationId?: string; status?: string } | null;
+  const applicationId = body?.applicationId ?? "";
+  const status = body?.status ?? "";
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(applicationId)) {
+    return json({ error: "A valid application ID is required." }, 400);
+  }
+  if (!["under_review", "rejected"].includes(status)) {
+    return json({ error: "Choose a supported application review status." }, 400);
+  }
+  const { data: application, error: lookupError } = await context.admin
+    .from("school_applications").select("id,status,school_name")
+    .eq("id", applicationId).in("status", ["pending", "under_review"]).maybeSingle();
+  if (lookupError || !application) return json({ error: "Pending application not found." }, 404);
+  const { error: updateError } = await context.admin
+    .from("school_applications").update({ status }).eq("id", applicationId);
+  if (updateError) return json({ error: "Could not update application review status." }, 500);
+  await context.admin.from("audit_logs").insert({
+    actor_user_id: (await context.admin.auth.getUser()).data.user?.id ?? null,
+    action: "school_application_" + status,
+    entity_type: "school_application",
+    entity_id: applicationId,
+    metadata: { school_name: application.school_name, status },
+  });
+  return json({ applicationId, status });
+}
