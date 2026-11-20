@@ -38,7 +38,7 @@ async function getPlatformAdmin(request: Request) {
   const admin = createClient(url, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  return { admin };
+  return { admin, userId: data.user.id };
 }
 
 export async function GET(request: Request) {
@@ -118,7 +118,7 @@ export async function PATCH(request: Request) {
     .from("school_applications").update({ status }).eq("id", applicationId);
   if (updateError) return json({ error: "Could not update application review status." }, 500);
   await context.admin.from("audit_logs").insert({
-    actor_user_id: (await context.admin.auth.getUser()).data.user?.id ?? null,
+    actor_user_id: context.userId,
     action: "school_application_" + status,
     entity_type: "school_application",
     entity_id: applicationId,
