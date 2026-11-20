@@ -20,7 +20,7 @@ export default function SchoolverseDashboardPage(){
    if(!active)return;setEmail(user.email??"");
    const {data,error:queryError}=await supabase.from("school_memberships").select("school_id,role,status,schools!inner(name,slug,country_code,currency_code,default_locale,timezone)").eq("user_id",user.id).eq("status","active");
    if(queryError)throw queryError;
-   if(active)setMemberships((data??[]) as unknown as Membership[]);
+   const {data:applicationRows,error:applicationError}=await supabase.from("school_applications").select("id,school_name,status,created_at").eq("applicant_user_id",user.id).order("created_at",{ascending:false}).limit(10);\n   if(applicationError)throw applicationError;\n   if(active){setMemberships((data??[]) as unknown as Membership[]);setApplications((applicationRows??[]) as Application[]);}
   }catch(e){if(active)setError(e instanceof Error?e.message:"Could not load your school memberships.");}
   finally{if(active)setLoading(false);}
  })();return()=>{active=false};},[router]);
