@@ -19,7 +19,7 @@
 19 public application tables are present:
 `schools`, `school_memberships`, `academic_years`, `classes`, `sections`, `students`, `staff`, `student_guardians`, `attendance`, `fee_invoices`, `fee_payments`, `audit_logs`, `school_applications`, `timetable_entries`, `homework`, `school_notices`, `exams`, `exam_results`, and `teaching_assignments`.
 
-RLS is enabled on all application tables. Membership provisioning and payment recording are server-only operations. Public signup cannot assign school membership or privileged roles. School provisioning RPC execution is restricted to `service_role`. Teacher access to students, attendance and homework is restricted to linked teaching assignments. Timetable database exclusion constraints prevent class/teacher time overlaps. Fee payment recording is transactional, idempotent, prevents overpayment, updates invoice status and creates a receipt number plus audit event.
+RLS is enabled on all application tables. Membership provisioning and payment recording are server-only operations. Public signup cannot assign school membership or privileged roles. One user may hold multiple independently authorised roles in the same school (for example, teacher and parent). School provisioning RPC execution is restricted to `service_role`. Teacher access to students, attendance and homework is restricted to linked teaching assignments. Timetable database exclusion constraints prevent class/teacher time overlaps. Fee payment recording is transactional, idempotent, prevents overpayment, updates invoice status and creates a receipt number plus audit event.
 
 ## Implemented routes
 
