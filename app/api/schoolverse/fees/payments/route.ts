@@ -28,8 +28,8 @@ export async function POST(request: Request) {
     schoolId?: string; invoiceId?: string; amountMinor?: number;
     paymentMethod?: string; idempotencyKey?: string; notes?: string;
   } | null;
-  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  if (!body || !uuid.test(body.schoolId ?? "") || !uuid.test(body.invoiceId ?? "")) {
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\n  const schoolId = body?.schoolId ?? "";\n  const invoiceId = body?.invoiceId ?? "";
+  if (!body || !uuid.test(schoolId) || !uuid.test(invoiceId)) {
     return json({ error: "A valid school and invoice are required." }, 400);
   }
   if (!Number.isSafeInteger(body.amountMinor) || (body.amountMinor ?? 0) <= 0) {
@@ -49,15 +49,15 @@ export async function POST(request: Request) {
   });
   const { data: membership, error: membershipError } = await admin
     .from("school_memberships").select("role,status")
-    .eq("school_id", body.schoolId).eq("user_id", user.id).eq("status", "active")
+    .eq("school_id", schoolId).eq("user_id", user.id).eq("status", "active")
     .in("role", ["school_admin", "accountant"]).maybeSingle();
   if (membershipError || !membership) {
     return json({ error: "Only an active school administrator or accountant can record payments." }, 403);
   }
 
   const { data: result, error: paymentError } = await admin.rpc("record_fee_payment", {
-    p_school_id: body.schoolId,
-    p_invoice_id: body.invoiceId,
+    p_school_id: schoolId,
+    p_invoice_id: invoiceId,
     p_amount_minor: body.amountMinor,
     p_payment_method: body.paymentMethod,
     p_idempotency_key: body.idempotencyKey,
