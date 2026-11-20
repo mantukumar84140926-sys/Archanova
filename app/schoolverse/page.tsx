@@ -34,7 +34,7 @@ export default function SchoolverseHome() {
           <span>SCHOOL<span>VERSE</span><small>SCHOOL MANAGEMENT, SIMPLIFIED</small></span>
         </Link>
         <nav className="sv-nav"><a href="#portals">Portals</a><a href="#modules">Features</a><a href="#security">Security</a></nav>
-        <Link href="#get-started" className="sv-header-cta">Get started <ArrowRight size={16} /></Link>
+        <Link href="/schoolverse/login" className="sv-header-cta">Get started <ArrowRight size={16} /></Link>
         <button className="sv-menu" aria-label="Menu"><Menu /></button>
       </header>
 
@@ -69,7 +69,7 @@ export default function SchoolverseHome() {
 
       <section className="sv-security" id="security"><div><div className="sv-kicker"><span /> BUILT FOR SCHOOLS AROUND THE WORLD</div><h2>One platform.<br /><em>Private school data.</em></h2><p>Schools around the world get separate workspaces. Access is controlled by verified school memberships and database-level policies, not just hidden screens.</p></div><div className="sv-security-points"><span><ShieldCheck /> School-wise access controls</span><span><Users /> Role-based permissions</span><span><Building2 /> Separate school records</span></div></section>
 
-      <section className="sv-cta" id="get-started"><div className="sv-cta-icon"><GraduationCap size={32} /></div><div><div className="sv-kicker">GLOBAL SCHOOL MANAGEMENT, FREE TO USE</div><h2>Better connected.<br /><em>Ready for what’s next.</em></h2><p>Designed for different countries, currencies, languages and school calendars. The web experience comes first, with Android to follow.</p></div><a href="#portals" className="sv-primary">Explore portals <ArrowRight size={17} /></a></section>
+      <section className="sv-cta" id="get-started"><div className="sv-cta-icon"><GraduationCap size={32} /></div><div><div className="sv-kicker">GLOBAL SCHOOL MANAGEMENT, FREE TO USE</div><h2>Better connected.<br /><em>Ready for what’s next.</em></h2><p>Designed for different countries, currencies, languages and school calendars. The web experience comes first, with Android to follow.</p></div><a href="/schoolverse/signup" className="sv-primary">Create an account <ArrowRight size={17} /></a></section>
       <footer className="sv-footer"><Link href="/schoolverse" className="sv-brand"><span className="sv-brand-icon"><GraduationCap size={20} /></span><span>SCHOOL<span>VERSE</span></span></Link><small>© 2026 SCHOOLVERSE · Global school management, simplified. A RITEX product.</small></footer>
     </main>
   );
