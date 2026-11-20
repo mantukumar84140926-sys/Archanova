@@ -28,7 +28,9 @@ export async function POST(request: Request) {
     schoolId?: string; invoiceId?: string; amountMinor?: number;
     paymentMethod?: string; idempotencyKey?: string; notes?: string;
   } | null;
-  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\n  const schoolId = body?.schoolId ?? "";\n  const invoiceId = body?.invoiceId ?? "";
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const schoolId = body?.schoolId ?? "";
+  const invoiceId = body?.invoiceId ?? "";
   if (!body || !uuid.test(schoolId) || !uuid.test(invoiceId)) {
     return json({ error: "A valid school and invoice are required." }, 400);
   }
