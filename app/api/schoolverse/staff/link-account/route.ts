@@ -13,7 +13,7 @@ export async function POST(request:Request){
  const email=(body?.email??"").trim().toLowerCase();const role=body?.role??"teacher";const schoolId=body?.schoolId??"",staffId=body?.staffId??"";
  if(!body||!uuid.test(schoolId)||!uuid.test(staffId)||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||!["teacher","accountant","principal"].includes(role))return json({error:"Provide a valid staff record, email and role."},400);
  const admin=createClient(url,secretKey,{auth:{persistSession:false,autoRefreshToken:false}});
- const {data:membership,error:membershipError}=await admin.from("school_memberships").select("role,status").eq("school_id",schoolId).eq("user_id",actor.id).maybeSingle();
+ const {data:membership,error:membershipError}=await admin.from("school_memberships").select("role,status").eq("school_id",schoolId).eq("user_id",actor.id).in("role",["school_admin","principal"]).eq("status","active").limit(1).maybeSingle();
  if(membershipError||!membership||membership.status!=="active"||!["school_admin","principal"].includes(membership.role))return json({error:"Only an active school administrator or principal can invite staff."},403);
  const {data:staff,error:staffError}=await admin.from("staff").select("id,school_id,auth_user_id,email,first_name,last_name,portal_role").eq("id",staffId).eq("school_id",schoolId).maybeSingle();
  if(staffError||!staff)return json({error:"Staff record not found in this school."},404);
@@ -33,9 +33,9 @@ export async function POST(request:Request){
   if(error||!data.user)return json({error:error?.message??"Could not send the staff invitation."},400);
   invitedUser={id:data.user.id};
  }
- const {data:existing,error:existingError}=await admin.from("school_memberships").select("role,status").eq("school_id",schoolId).eq("user_id",invitedUser.id).maybeSingle();
+ const {data:existing,error:existingError}=await admin.from("school_memberships").select("role,status").eq("school_id",schoolId).eq("user_id",invitedUser.id).eq("role",role).maybeSingle();
  if(existingError)return json({error:"Could not verify the user's school membership."},500);
- if(existing&&existing.role!==role)return json({error:"This account already has a different role in this school. A school administrator must resolve the existing membership first."},409);
+ 
  if(existing&&existing.status!=="active")return json({error:"This account has a non-active membership. Reactivate it through the trusted admin process."},409);
  if(!existing){
   const {error}=await admin.from("school_memberships").insert({school_id:schoolId,user_id:invitedUser.id,role,status:"active"});
