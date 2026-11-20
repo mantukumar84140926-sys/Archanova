@@ -4,7 +4,7 @@
   "short_name": "SCHOOLVERSE",
   "description": "School management for administrators, teachers, students and parents.",
   "start_url": "/schoolverse",
-  "scope": "/schoolverse/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#101a2d",
