@@ -40,11 +40,11 @@ export default function SchoolverseHome() {
 
       <section className="sv-hero">
         <div className="sv-hero-copy">
-          <div className="sv-kicker"><span /> ONE PLATFORM. EVERY SCHOOL.</div>
-          <h1>School life,<br /><em>in sync.</em></h1>
-          <p>One connected workspace for school teams, teachers, students and parents. Manage everyday school operations with clarity and confidence.</p>
+          <div className="sv-kicker"><span /> GLOBAL SCHOOL MANAGEMENT · FREE TO USE</div>
+          <h1>Every school,<br /><em>in sync.</em></h1>
+          <p>A global, free-to-use workspace for school teams, teachers, students and parents. Manage everyday school operations across countries, languages and time zones.</p>
           <div className="sv-actions"><a className="sv-primary" href="#portals">Explore the platform <ArrowRight size={17} /></a><a className="sv-secondary" href="#modules">See what’s included</a></div>
-          <div className="sv-trust"><ShieldCheck size={18} /><span>School-wise data separation designed into the foundation</span></div>
+          <div className="sv-trust"><ShieldCheck size={18} /><span>School-wise data isolation · Global-ready by design</span></div>
         </div>
         <div className="sv-preview" aria-label="School management dashboard preview">
           <div className="sv-preview-top"><div><span className="sv-window-dot" /><span className="sv-window-dot" /><span className="sv-window-dot" /></div><span>School overview · Preview</span><span className="sv-live">DESIGN PREVIEW</span></div>
@@ -61,16 +61,16 @@ export default function SchoolverseHome() {
       </section>
 
       <section className="sv-audience" id="portals">
-        <div className="sv-section-head"><div className="sv-kicker"><span /> ONE PLATFORM, MANY ROLES</div><h2>Everyone has a place<br />in the <em>school community.</em></h2><p>Separate workspaces with permissions tailored to each role.</p></div>
+        <div className="sv-section-head"><div className="sv-kicker"><span /> ONE GLOBAL PLATFORM, MANY ROLES</div><h2>Everyone has a place<br />in the <em>school community.</em></h2><p>Separate workspaces with permissions tailored to each role.</p></div>
         <div className="sv-portal-grid">{portals.map((portal) => { const Icon = portal.icon; return <article className="sv-portal-card" key={portal.title}><div className="sv-icon-tile"><Icon size={22} /></div><h3>{portal.title}</h3><p>{portal.detail}</p><span className="sv-card-arrow"><ArrowRight size={16} /></span></article>; })}</div>
       </section>
 
       <section className="sv-modules" id="modules"><div className="sv-section-head"><div className="sv-kicker"><span /> THE DAILY ESSENTIALS</div><h2>Less paperwork.<br /><em>More progress.</em></h2><p>Core modules designed to work together, from admission to report cards.</p></div><div className="sv-module-grid">{modules.map((module) => { const Icon = module.icon; return <article className="sv-module" key={module.title}><Icon size={21} /><div><h3>{module.title}</h3><p>{module.detail}</p></div></article>; })}</div></section>
 
-      <section className="sv-security" id="security"><div><div className="sv-kicker"><span /> BUILT FOR MULTIPLE SCHOOLS</div><h2>One platform.<br /><em>Private school data.</em></h2><p>Each school gets its own workspace. Access is controlled by verified school memberships and database-level policies, not just hidden screens.</p></div><div className="sv-security-points"><span><ShieldCheck /> School-wise access controls</span><span><Users /> Role-based permissions</span><span><Building2 /> Separate school records</span></div></section>
+      <section className="sv-security" id="security"><div><div className="sv-kicker"><span /> BUILT FOR SCHOOLS AROUND THE WORLD</div><h2>One platform.<br /><em>Private school data.</em></h2><p>Schools around the world get separate workspaces. Access is controlled by verified school memberships and database-level policies, not just hidden screens.</p></div><div className="sv-security-points"><span><ShieldCheck /> School-wise access controls</span><span><Users /> Role-based permissions</span><span><Building2 /> Separate school records</span></div></section>
 
-      <section className="sv-cta" id="get-started"><div className="sv-cta-icon"><GraduationCap size={32} /></div><div><div className="sv-kicker">THE SCHOOLVERSE JOURNEY STARTS HERE</div><h2>Better connected.<br /><em>Ready for what’s next.</em></h2><p>We’re building the foundation in stages, with the web experience first and Android to follow.</p></div><a href="#portals" className="sv-primary">Explore portals <ArrowRight size={17} /></a></section>
-      <footer className="sv-footer"><Link href="/schoolverse" className="sv-brand"><span className="sv-brand-icon"><GraduationCap size={20} /></span><span>SCHOOL<span>VERSE</span></span></Link><small>© 2026 SCHOOLVERSE · School management, simplified.</small></footer>
+      <section className="sv-cta" id="get-started"><div className="sv-cta-icon"><GraduationCap size={32} /></div><div><div className="sv-kicker">GLOBAL SCHOOL MANAGEMENT, FREE TO USE</div><h2>Better connected.<br /><em>Ready for what’s next.</em></h2><p>Designed for different countries, currencies, languages and school calendars. The web experience comes first, with Android to follow.</p></div><a href="#portals" className="sv-primary">Explore portals <ArrowRight size={17} /></a></section>
+      <footer className="sv-footer"><Link href="/schoolverse" className="sv-brand"><span className="sv-brand-icon"><GraduationCap size={20} /></span><span>SCHOOL<span>VERSE</span></span></Link><small>© 2026 SCHOOLVERSE · Global school management, simplified.</small></footer>
     </main>
   );
 }
