@@ -17,7 +17,8 @@ export async function POST(request:Request){
  if(membershipError||!membership||membership.status!=="active"||!["school_admin","principal"].includes(membership.role))return json({error:"Only an active school administrator or principal can invite staff."},403);
  const {data:staff,error:staffError}=await admin.from("staff").select("id,school_id,auth_user_id,email,first_name,last_name,portal_role").eq("id",staffId).eq("school_id",schoolId).maybeSingle();
  if(staffError||!staff)return json({error:"Staff record not found in this school."},404);
- if(staff.auth_user_id)return json({error:"This staff record is already linked to a login account."},409);\n if(staff.portal_role!==role)return json({error:"The selected login role must match the staff record portal role."},400);
+ if(staff.auth_user_id)return json({error:"This staff record is already linked to a login account."},409);
+ if(staff.portal_role!==role)return json({error:"The selected login role must match the staff record portal role."},400);
  if(staff.email&&staff.email.toLowerCase()!==email)return json({error:"The invitation email must match the staff record email. Update the staff record first."},400);
  let invitedUser:null|{id:string}=null;
  for(let page=1;page<=20;page++){
