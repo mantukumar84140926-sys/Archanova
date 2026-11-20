@@ -62,3 +62,11 @@
 .sv-notice-list small{color:#8798b2}
 .sv-record-form h2{display:flex;align-items:center;gap:8px}
 \n.sv-application-status{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid rgba(148,163,184,.16)}.sv-application-status span:first-child{display:grid;gap:4px}.sv-application-status small{color:#91a1b9;font-size:12px}\n
+.sv-platform-applications{display:grid;gap:16px;margin-top:20px}
+.sv-platform-application h2{margin:8px 0;font-size:21px}
+.sv-platform-application p{color:#aebdd1;line-height:1.55;margin:5px 0}
+.sv-platform-config{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.sv-platform-config label{display:grid;gap:7px;color:#c8d3e5;font-size:13px;font-weight:650}
+.sv-platform-config input{width:100%;min-height:42px;border:1px solid rgba(148,163,184,.24);border-radius:12px;background:#101a2b;color:#eef4ff;padding:10px 12px;font:inherit}
+.sv-platform-application .sv-record-primary{min-height:44px;border:0;border-radius:12px;background:#7c9cff;color:#071326;font-weight:800;padding:0 16px}
+@media(max-width:600px){.sv-platform-config{grid-template-columns:1fr}}
