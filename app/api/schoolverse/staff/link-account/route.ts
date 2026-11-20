@@ -40,7 +40,7 @@ export async function POST(request:Request){
   const {error}=await admin.from("school_memberships").insert({school_id:schoolId,user_id:invitedUser.id,role,status:"active"});
   if(error)return json({error:"The invitation was created but membership could not be assigned. Retry linking this staff account."},500);
  }
- const {error:linkError}=await admin.from("staff").update({auth_user_id:invitedUser.id,email}).eq("id",staff.id).eq("school_id",schoolId);
+ const {error:linkError}=await admin.from("staff").update({auth_user_id:invitedUser.id,email,portal_role:role}).eq("id",staff.id).eq("school_id",schoolId);
  if(linkError)return json({error:"The account was invited but staff linking failed. Retry linking this staff account."},500);
  return json({linked:true,invited:!existing,role,email},200);
 }
