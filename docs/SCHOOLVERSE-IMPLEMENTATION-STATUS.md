@@ -21,6 +21,7 @@ RLS is enabled on all application tables. Membership provisioning and payment re
 
 - `/schoolverse`: product landing page
 - `/schoolverse/signup`, `/schoolverse/login`: email/password authentication
+- `/schoolverse/forgot-password`, `/schoolverse/reset-password`: secure email-based password recovery
 - `/schoolverse/dashboard`: school memberships and application status
 - `/schoolverse/apply`: authenticated school onboarding application
 - `/schoolverse/platform`: private RITEX application review and school provisioning UI
