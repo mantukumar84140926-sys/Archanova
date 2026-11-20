@@ -1,5 +1,8 @@
 # SCHOOLVERSE — Architecture & Build Plan
 
+## Company and product brand
+RITEX is the parent technology brand. SCHOOLVERSE is an independent product brand within the RITEX product portfolio. Keep product identity distinct while using “A RITEX product” as company attribution where appropriate. This is a brand decision, not a statement that a legal entity or trademark has been registered.
+
 ## Product direction
 SCHOOLVERSE is a global-first, free-to-use, multi-tenant school management platform. It is designed for schools in different countries from day one. The first release is a responsive web application. A future Android application will reuse the same authentication, API contracts, and database.
 
