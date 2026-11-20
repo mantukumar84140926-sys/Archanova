@@ -2,7 +2,7 @@
 import {FormEvent,useCallback,useEffect,useState} from "react";
 import Link from "next/link";
 import {useParams,useRouter} from "next/navigation";
-import {ArrowLeft,Plus,RefreshCw,Wallet,Receipt,Printer} from "lucide-react";
+import {ArrowLeft,Plus,RefreshCw,Wallet,Receipt} from "lucide-react";
 import {createClient} from "@/lib/supabase/client";
 type Student={id:string;admission_number:string;first_name:string;last_name:string|null};
 type Invoice={id:string;student_id:string;invoice_number:string;currency_code:string;total_minor:number;due_date:string|null;status:string;created_at:string};
