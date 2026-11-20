@@ -24,7 +24,7 @@ export default function FeesPage(){
   setSchoolId(school.id);setCurrency(school.currency_code??"INR");
   const {data:iv,error:ie}=await s.from("fee_invoices").select("id,student_id,invoice_number,currency_code,total_minor,due_date,status,created_at").eq("school_id",school.id).order("created_at",{ascending:false}).limit(200);if(ie)throw ie;setInvoices((iv??[]) as Invoice[]);
   const {data:paymentsRows,error:pe}=await s.from("fee_payments").select("id,invoice_id,amount_minor,currency_code,status,receipt_number,payment_method,paid_at").eq("school_id",school.id).order("paid_at",{ascending:false}).limit(300);if(pe)throw pe;setPayments((paymentsRows??[]) as Payment[]);
-  if(canManage){const {data:st,error:ste}=await s.from("students").select("id,admission_number,first_name,last_name").eq("school_id",school.id).eq("status","active").order("admission_number");if(ste)throw ste;setStudents((st??[]) as Student[]);if(!studentId&&st?.[0])setStudentId(st[0].id);}
+  const {data:st,error:ste}=await s.from("students").select("id,admission_number,first_name,last_name").eq("school_id",school.id).eq("status","active").order("admission_number");if(ste)throw ste;setStudents((st??[]) as Student[]);if(canManage&&!studentId&&st?.[0])setStudentId(st[0].id);
  },[p.role,p.slug,router,studentId,canManage]);
  useEffect(()=>{let live=true;(async()=>{try{await load()}catch(e){if(live)setError(e instanceof Error?e.message:"Could not load fee records.")}finally{if(live)setLoading(false)}})();return()=>{live=false}},[load]);
  function formatMoney(minor:number,code:string){try{const f=new Intl.NumberFormat("en",{style:"currency",currency:code});const digits=f.resolvedOptions().maximumFractionDigits??2;return f.format(minor/10**digits)}catch{return `${minor} ${code}`}}
