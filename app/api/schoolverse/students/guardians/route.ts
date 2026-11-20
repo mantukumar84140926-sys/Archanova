@@ -1,4 +1,4 @@
-import {createClient} from "@supabase/supabase-js";
+import {createClient,type SupabaseClient} from "@supabase/supabase-js";
 function json(data:unknown,status=200){return Response.json(data,{status,headers:{"Cache-Control":"no-store"}})}
 async function context(request:Request){
  const authorization=request.headers.get("authorization")??"";const token=authorization.startsWith("Bearer ")?authorization.slice(7):"";
@@ -11,12 +11,12 @@ async function context(request:Request){
  const admin=createClient(url,secret,{auth:{persistSession:false,autoRefreshToken:false}});
  return {actor,admin};
 }
-async function isSchoolLeader(admin:any,schoolId:string,userId:string){
+async function isSchoolLeader(admin:SupabaseClient,schoolId:string,userId:string){
  const {data,error}=await admin.from("school_memberships").select("role,status").eq("school_id",schoolId).eq("user_id",userId).maybeSingle();
  return !error&&data?.status==="active"&&["school_admin","principal"].includes(data.role);
 }
 async function findUser(admin:any,email:string){
- for(let page=1;page<=20;page++){const {data,error}=await admin.auth.admin.listUsers({page,perPage:1000});if(error)throw error;const user=data.users.find((u:any)=>u.email?.toLowerCase()===email);if(user)return user;if(data.users.length<1000)break;}
+ for(let page=1;page<=20;page++){const {data,error}=await admin.auth.admin.listUsers({page,perPage:1000});if(error)throw error;const user=data.users.find((u)=>u.email?.toLowerCase()===email);if(user)return user;if(data.users.length<1000)break;}
  return null;
 }
 export async function POST(request:Request){
