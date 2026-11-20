@@ -47,3 +47,17 @@
 .sv-attendance-save{justify-content:space-between;margin-top:16px}
 .sv-attendance-save span{display:flex;align-items:center;gap:8px;color:#9fb0c7;font-size:13px}
 @media(max-width:600px){.sv-application-row{grid-template-columns:1fr}.sv-attendance-toolbar label{width:100%}}
+
+.sv-notice-form{display:grid;gap:14px;margin:20px 0}
+.sv-notice-form label{display:grid;gap:7px;color:#c8d3e5;font-size:13px;font-weight:650}
+.sv-notice-form input,.sv-notice-form select,.sv-notice-form textarea,.sv-record-form select{width:100%;min-height:42px;border:1px solid rgba(148,163,184,.24);border-radius:12px;background:#101a2b;color:#eef4ff;padding:10px 12px;font:inherit}
+.sv-notice-form textarea{resize:vertical}
+.sv-notice-form button,.sv-record-form button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;width:max-content;border:0;border-radius:12px;background:#7c9cff;color:#071326;font-weight:800;padding:0 16px}
+.sv-check-label{display:flex!important;align-items:center;gap:10px!important}
+.sv-check-label input{width:18px!important;min-height:18px!important}
+.sv-notice-list{display:grid;gap:12px;margin:20px 0}
+.sv-notice-list h2{margin:8px 0;font-size:19px}
+.sv-notice-list p{white-space:pre-wrap;color:#b9c7da;line-height:1.65}
+.sv-notice-meta{color:#91a8ca;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.sv-notice-list small{color:#8798b2}
+.sv-record-form h2{display:flex;align-items:center;gap:8px}
