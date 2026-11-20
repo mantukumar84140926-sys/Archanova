@@ -3,7 +3,7 @@
 import { useEffect,useState } from "react";
 import Link from "next/link";
 import { useParams,useRouter } from "next/navigation";
-import { Building2,CalendarCheck,BookOpen,Wallet,Users,ClipboardList,Bell,ArrowLeft,LogOut } from "lucide-react";
+import { CalendarCheck,BookOpen,Wallet,Users,ClipboardList,Bell,ArrowLeft,LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const labels:Record<string,string>={school_admin:"School Admin",principal:"Principal",teacher:"Teacher",student:"Student",parent:"Parent",accountant:"Accountant"};
