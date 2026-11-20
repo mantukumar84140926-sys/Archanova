@@ -61,3 +61,4 @@
 .sv-notice-meta{color:#91a8ca;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
 .sv-notice-list small{color:#8798b2}
 .sv-record-form h2{display:flex;align-items:center;gap:8px}
+\n.sv-application-status{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid rgba(148,163,184,.16)}.sv-application-status span:first-child{display:grid;gap:4px}.sv-application-status small{color:#91a1b9;font-size:12px}\n
