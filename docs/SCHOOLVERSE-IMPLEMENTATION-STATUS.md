@@ -13,7 +13,7 @@
 
 The project currently has 18 public application tables: schools, school_memberships, academic_years, classes, sections, students, staff, student_guardians, attendance, fee_invoices, fee_payments, audit_logs, school_applications, timetable_entries, homework, school_notices, exams and exam_results.
 
-RLS is enabled on every table. The Supabase security and health advisors returned no findings after the initial policies were applied. Fee payment writes and audit-log access are intentionally server-only at this stage. Operational write policies are scoped to school roles; membership provisioning remains a trusted platform operation and is not exposed to public signup.
+RLS is enabled on all 18 tables. The latest Supabase security and health advisor checks returned no findings. Performance advisors currently show only unused-index INFO notices because the new tables are empty; foreign-key index findings and overlapping permissive SELECT policies were corrected. Fee payment writes and audit-log access are intentionally server-only at this stage. Operational write policies are scoped to school roles; membership provisioning remains a trusted platform operation and is not exposed to public signup.
 
 ## Current web routes
 
