@@ -24,7 +24,8 @@ export async function POST(request:Request){
  const body=await request.json().catch(()=>null) as {schoolId?:string;studentId?:string;email?:string;relationship?:string;isPrimary?:boolean}|null;
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
  const email=(body?.email??"").trim().toLowerCase(),relationship=(body?.relationship??"").trim();
- if(!body||!uuid.test(body.schoolId??"")||!uuid.test(body.studentId??"")||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||relationship.length<2||relationship.length>60)return json({error:"Provide a valid student, guardian email and relationship."},400);
+ const schoolId=body?.schoolId??"",studentId=body?.studentId??"";
+ if(!body||!uuid.test(schoolId)||!uuid.test(studentId)||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||relationship.length<2||relationship.length>60)return json({error:"Provide a valid student, guardian email and relationship."},400);
  if(!await isSchoolLeader(ctx.admin,schoolId,ctx.actor.id))return json({error:"Only a school administrator or principal can link guardians."},403);
  const {data:student,error:studentError}=await ctx.admin.from("students").select("id,school_id").eq("id",studentId).eq("school_id",schoolId).maybeSingle();
  if(studentError||!student)return json({error:"Student record not found."},404);
@@ -45,9 +46,10 @@ export async function PATCH(request:Request){
  const ctx=await context(request);if("error" in ctx)return ctx.error;
  const body=await request.json().catch(()=>null) as {schoolId?:string;guardianLinkId?:string}|null;
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
- if(!body||!uuid.test(body.schoolId??"")||!uuid.test(body.guardianLinkId??""))return json({error:"A valid school and guardian link are required."},400);
- if(!await isSchoolLeader(ctx.admin,body.schoolId,ctx.actor.id))return json({error:"Only a school administrator or principal can verify guardians."},403);
- const {data,error}=await ctx.admin.from("student_guardians").update({verified_at:new Date().toISOString(),verified_by:ctx.actor.id}).eq("id",body.guardianLinkId).eq("school_id",body.schoolId).is("verified_at",null).select("id").maybeSingle();
+ const schoolId=body?.schoolId??"",guardianLinkId=body?.guardianLinkId??"";
+ if(!body||!uuid.test(schoolId)||!uuid.test(guardianLinkId))return json({error:"A valid school and guardian link are required."},400);
+ if(!await isSchoolLeader(ctx.admin,schoolId,ctx.actor.id))return json({error:"Only a school administrator or principal can verify guardians."},403);
+ const {data,error}=await ctx.admin.from("student_guardians").update({verified_at:new Date().toISOString(),verified_by:ctx.actor.id}).eq("id",guardianLinkId).eq("school_id",schoolId).is("verified_at",null).select("id").maybeSingle();
  if(error)return json({error:"Could not verify guardian relationship."},400);
  if(!data)return json({error:"Guardian link was not found or is already verified."},404);
  return json({verified:true});
