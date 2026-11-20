@@ -36,7 +36,7 @@ export async function POST(request:Request){
   if(membership&&membership.role!=="parent")return json({error:"This account already has another role in this school. Resolve the existing membership before linking it as a guardian."},409);
   if(membership&&membership.status!=="active")return json({error:"This guardian account has a non-active school membership."},409);
   if(!membership){const {error}=await ctx.admin.from("school_memberships").insert({school_id:body.schoolId,user_id:user.id,role:"parent",status:"active"});if(error)return json({error:"Guardian account created but school access could not be assigned. Retry the invitation."},500);}
-  const {data:link,error:linkError}=await ctx.admin.from("student_guardians").insert({school_id:body.schoolId,student_id:body.studentId,guardian_user_id:user.id,relationship,is_primary:body.isPrimary===true,verified_at:null,verified_by:null}).select("id").single();
+  const {data:link,error:linkError}=await ctx.admin.from("student_guardians").insert({school_id:body.schoolId,student_id:body.studentId,guardian_user_id:user.id,guardian_email:email,relationship,is_primary:body.isPrimary===true,verified_at:null,verified_by:null}).select("id").single();
   if(linkError)return json({error:linkError.code==="23505"?"This guardian is already linked to the student.": "Could not create guardian link."},linkError.code==="23505"?409:400);
   return json({guardianLinkId:link.id,invited,verified:false},201);
  }catch{return json({error:"Guardian account lookup failed. Please retry."},502);}
