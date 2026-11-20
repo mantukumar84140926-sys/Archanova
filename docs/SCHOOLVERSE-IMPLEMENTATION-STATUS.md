@@ -10,7 +10,7 @@
 - Frontend publishable key is configured in `.env.example`; it is safe for browser use with RLS.
 - Work is isolated on `schoolverse-foundation`. AJEDUVERSE `main` and its production deployment are not modified.
 
-## Database foundation
+## Android and web access\n\n- The SCHOOLVERSE web app is responsive and includes an installable PWA manifest and app icon for Android home-screen installation. This is not a Play Store APK; a native Android package remains a separate release deliverable.\n\n## Database foundation
 
 19 public application tables are present:
 `schools`, `school_memberships`, `academic_years`, `classes`, `sections`, `students`, `staff`, `student_guardians`, `attendance`, `fee_invoices`, `fee_payments`, `audit_logs`, `school_applications`, `timetable_entries`, `homework`, `school_notices`, `exams`, `exam_results`, and `teaching_assignments`.
