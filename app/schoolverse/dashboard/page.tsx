@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { Building2, GraduationCap, Users, Wallet, BookOpen, CalendarCheck, ShieldCheck, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-type Membership={school_id:string;role:string;status:string;schools:{name:string;slug:string;country_code:string;currency_code:string;default_locale:string;timezone:string}|null};\ntype Application={id:string;school_name:string;status:string;created_at:string};
+type Membership={school_id:string;role:string;status:string;schools:{name:string;slug:string;country_code:string;currency_code:string;default_locale:string;timezone:string}|null};
+type Application={id:string;school_name:string;status:string;created_at:string};
 const roleNames:Record<string,string>={school_admin:"School Admin",principal:"Principal",teacher:"Teacher",student:"Student",parent:"Parent",accountant:"Accountant"};
 const roleIcons:Record<string,typeof Building2>={school_admin:Building2,principal:ShieldCheck,teacher:GraduationCap,student:BookOpen,parent:Users,accountant:Wallet};
 
