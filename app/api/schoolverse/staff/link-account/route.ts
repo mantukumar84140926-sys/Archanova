@@ -11,7 +11,7 @@ export async function POST(request:Request){
  const body=await request.json().catch(()=>null) as {schoolId?:string;staffId?:string;email?:string;role?:string}|null;
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
  const email=(body?.email??"").trim().toLowerCase();const role=body?.role??"teacher";
- if(!body||!uuid.test(body.schoolId??"")||!uuid.test(body.staffId??"")||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||!["teacher","accountant"].includes(role))return json({error:"Provide a valid staff record, email and role."},400);
+ if(!body||!uuid.test(body.schoolId??"")||!uuid.test(body.staffId??"")||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>254||!["teacher","accountant","principal"].includes(role))return json({error:"Provide a valid staff record, email and role."},400);
  const admin=createClient(url,secretKey,{auth:{persistSession:false,autoRefreshToken:false}});
  const {data:membership,error:membershipError}=await admin.from("school_memberships").select("role,status").eq("school_id",body.schoolId).eq("user_id",actor.id).maybeSingle();
  if(membershipError||!membership||membership.status!=="active"||!["school_admin","principal"].includes(membership.role))return json({error:"Only an active school administrator or principal can invite staff."},403);
