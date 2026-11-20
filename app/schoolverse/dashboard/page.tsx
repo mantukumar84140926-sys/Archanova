@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, GraduationCap, Users, Wallet, BookOpen, CalendarCheck, ShieldCheck, LogOut } from "lucide-react";
+import { Building2, GraduationCap, Users, Wallet, BookOpen, ShieldCheck, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 type Membership={school_id:string;role:string;status:string;schools:{name:string;slug:string;country_code:string;currency_code:string;default_locale:string;timezone:string}|null};
