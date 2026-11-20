@@ -1,46 +1,27 @@
 "use client";
-
-import { FormEvent,useCallback,useEffect,useState } from "react";
+import {FormEvent,useCallback,useEffect,useState} from "react";
 import Link from "next/link";
-import { useParams,useRouter } from "next/navigation";
-import { ArrowLeft,Plus,RefreshCw,Search,Users } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-
-type Student={id:string;admission_number:string;first_name:string;last_name:string|null;admission_date:string;status:string};
+import {useParams,useRouter} from "next/navigation";
+import {ArrowLeft,Plus,RefreshCw,Search,Users} from "lucide-react";
+import {createClient} from "@/lib/supabase/client";
+type Student={id:string;admission_number:string;first_name:string;last_name:string|null;admission_date:string;date_of_birth:string|null;class_id:string|null;section_id:string|null;email:string|null;phone:string|null;status:string};
+type ClassRow={id:string;name:string};type Section={id:string;class_id:string;name:string};
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 export default function StudentRecordsPage(){
- const params=useParams<{slug:string;role:string}>();const router=useRouter();
- const [schoolId,setSchoolId]=useState("");const [schoolName,setSchoolName]=useState("");
- const [rows,setRows]=useState<Student[]>([]);const [loading,setLoading]=useState(true);const [saving,setSaving]=useState(false);
- const [error,setError]=useState("");const [search,setSearch]=useState("");const [showForm,setShowForm]=useState(false);
- const [admission,setAdmission]=useState("");const [first,setFirst]=useState("");const [last,setLast]=useState("");
- const canManage=["school_admin","principal"].includes(params.role);
- const load=useCallback(async()=>{
-  setError("");const supabase=createClient();
-  const {data:{user}}=await supabase.auth.getUser();if(!user){router.replace("/schoolverse/login");return;}
-  const {data:members,error:memberError}=await supabase.from("school_memberships").select("school_id,role").eq("user_id",user.id).eq("role",params.role).eq("status","active");
-  if(memberError)throw memberError;
-  const {data:schools,error:schoolError}=await supabase.from("schools").select("id,name,slug").eq("slug",params.slug);
-  if(schoolError)throw schoolError;
-  const school=(schools??[]).find(s=>(members??[]).some(m=>m.school_id===s.id));
-  if(!school)throw new Error("You do not have access to this school.");
-  setSchoolId(school.id);setSchoolName(school.name);
-  const {data,error:studentsError}=await supabase.from("students").select("id,admission_number,first_name,last_name,admission_date,status").eq("school_id",school.id).order("admission_date",{ascending:false}).limit(200);
-  if(studentsError)throw studentsError;setRows((data??[]) as Student[]);
- },[params.role,params.slug,router]);
- useEffect(()=>{let live=true;(async()=>{try{await load();}catch(e){if(live)setError(e instanceof Error?e.message:"Could not load student records.");}finally{if(live)setLoading(false);}})();return()=>{live=false};},[load]);
- async function addStudent(e:FormEvent<HTMLFormElement>){e.preventDefault();if(!schoolId)return;setSaving(true);setError("");
-  try{const supabase=createClient();const {error:insertError}=await supabase.from("students").insert({school_id:schoolId,admission_number:admission.trim(),first_name:first.trim(),last_name:last.trim()||null});
-   if(insertError)throw insertError;setAdmission("");setFirst("");setLast("");setShowForm(false);await load();
-  }catch(e){setError(e instanceof Error?e.message:"Could not save student. Check admission number and your school role.");}finally{setSaving(false);}
- }
- const filtered=rows.filter(s=>`${s.admission_number} ${s.first_name} ${s.last_name??""}`.toLowerCase().includes(search.toLowerCase()));
- return <main className="sv-app-shell"><header className="sv-app-header"><Link href="/schoolverse" className="sv-auth-brand">SCHOOL<span>VERSE</span></Link><Link href={`/schoolverse/school/${encodeURIComponent(params.slug)}/${params.role}`} className="sv-app-back"><ArrowLeft size={15}/> Workspace</Link></header>
- <section className="sv-app-content"><div className="sv-kicker"><span/> STUDENT MANAGEMENT</div><h1>Student records</h1><p className="sv-auth-intro">{schoolName||"Your school"} · Secure school records</p>
- {error&&<div className="sv-auth-error" role="alert">{error}</div>}
+ const p=useParams<{slug:string;role:string}>(),router=useRouter(),canManage=["school_admin","principal"].includes(p.role);
+ const [schoolId,setSchoolId]=useState("");const [schoolName,setSchoolName]=useState("");const [rows,setRows]=useState<Student[]>([]);const [classes,setClasses]=useState<ClassRow[]>([]);const [sections,setSections]=useState<Section[]>([]);
+ const [loading,setLoading]=useState(true);const [saving,setSaving]=useState(false);const [error,setError]=useState("");const [search,setSearch]=useState("");const [showForm,setShowForm]=useState(false);
+ const [admission,setAdmission]=useState("");const [first,setFirst]=useState("");const [last,setLast]=useState("");const [classId,setClassId]=useState("");const [sectionId,setSectionId]=useState("");const [dob,setDob]=useState("");const [admissionDate,setAdmissionDate]=useState(today());const [email,setEmail]=useState("");const [phone,setPhone]=useState("");
+ const load=useCallback(async()=>{setError("");const s=createClient();const {data:{user}}=await s.auth.getUser();if(!user){router.replace("/schoolverse/login");return;}const {data:m,error:me}=await s.from("school_memberships").select("school_id").eq("user_id",user.id).eq("role",p.role).eq("status","active");if(me)throw me;const {data:schools,error:se}=await s.from("schools").select("id,name,slug").eq("slug",p.slug);if(se)throw se;const school=(schools??[]).find(x=>(m??[]).some(y=>y.school_id===x.id));if(!school)throw new Error("You do not have access to this school.");setSchoolId(school.id);setSchoolName(school.name);
+ const {data:st,error:ste}=await s.from("students").select("id,admission_number,first_name,last_name,admission_date,date_of_birth,class_id,section_id,email,phone,status").eq("school_id",school.id).order("admission_date",{ascending:false}).limit(500);if(ste)throw ste;setRows((st??[]) as Student[]);
+ const {data:c,error:ce}=await s.from("classes").select("id,name").eq("school_id",school.id).order("name");if(ce)throw ce;setClasses((c??[]) as ClassRow[]);
+ const {data:sec,error:se2}=await s.from("sections").select("id,class_id,name").eq("school_id",school.id).order("name");if(se2)throw se2;setSections((sec??[]) as Section[])
+ },[p.role,p.slug,router]);
+ useEffect(()=>{let live=true;(async()=>{try{await load()}catch(e){if(live)setError(e instanceof Error?e.message:"Could not load student records.")}finally{if(live)setLoading(false)}})();return()=>{live=false}},[load]);
+ async function addStudent(e:FormEvent){e.preventDefault();setSaving(true);setError("");try{if(sectionId&&!sections.some(x=>x.id===sectionId&&x.class_id===classId))throw new Error("Selected section does not belong to the selected class.");const s=createClient();const {error}=await s.from("students").insert({school_id:schoolId,admission_number:admission.trim(),first_name:first.trim(),last_name:last.trim()||null,class_id:classId||null,section_id:sectionId||null,date_of_birth:dob||null,admission_date:admissionDate,email:email.trim().toLowerCase()||null,phone:phone.trim()||null,status:"active"});if(error)throw error;setAdmission("");setFirst("");setLast("");setClassId("");setSectionId("");setDob("");setAdmissionDate(today());setEmail("");setPhone("");setShowForm(false);await load()}catch(e){setError(e instanceof Error?e.message:"Could not save student. Check admission number and your school role.")}finally{setSaving(false)}}
+ const filtered=rows.filter(s=>[s.admission_number,s.first_name,s.last_name??""].join(" ").toLowerCase().includes(search.toLowerCase()));
+ return <main className="sv-app-shell"><header className="sv-app-header"><Link href="/schoolverse" className="sv-auth-brand">SCHOOL<span>VERSE</span></Link><Link href={"/schoolverse/school/"+encodeURIComponent(p.slug)+"/"+p.role} className="sv-app-back"><ArrowLeft size={15}/> Workspace</Link></header><section className="sv-app-content"><div className="sv-kicker"><span/> STUDENT MANAGEMENT</div><h1>Student records</h1><p className="sv-auth-intro">{schoolName||"Your school"} · Admissions and student profiles</p>{error&&<div className="sv-auth-error" role="alert">{error}</div>}
  <div className="sv-record-toolbar"><div className="sv-record-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search name or admission number"/></div><div className="sv-record-actions"><button onClick={()=>load()}><RefreshCw size={15}/> Refresh</button>{canManage&&<button className="sv-record-primary" onClick={()=>setShowForm(v=>!v)}><Plus size={16}/> Add student</button>}</div></div>
- {showForm&&canManage&&<form className="sv-record-form" onSubmit={addStudent}><h2>New student admission</h2><div><label>Admission number<input required value={admission} onChange={e=>setAdmission(e.target.value)} placeholder="e.g. STU-0001"/></label><label>First name<input required value={first} onChange={e=>setFirst(e.target.value)} placeholder="First name"/></label><label>Last name<input value={last} onChange={e=>setLast(e.target.value)} placeholder="Last name (optional)"/></label></div><button disabled={saving}>{saving?"Saving…":"Save student"}</button></form>}
- <div className="sv-record-table-wrap"><table className="sv-record-table"><thead><tr><th>Admission no.</th><th>Student name</th><th>Admission date</th><th>Status</th></tr></thead><tbody>
- {loading?<tr><td colSpan={4}>Loading student records…</td></tr>:filtered.length===0?<tr><td colSpan={4}>{rows.length===0?"No student records yet. Add your first student when your school admin access is active.":"No matching students found."}</td></tr>:filtered.map(s=><tr key={s.id}><td>{s.admission_number}</td><td>{s.first_name} {s.last_name??""}</td><td>{s.admission_date}</td><td><span className="sv-record-status">{s.status}</span></td></tr>)}
- </tbody></table></div><p className="sv-record-footnote"><Users size={15}/> Showing up to 200 student records. Access is enforced by database row-level security.</p>
- </section><footer className="sv-app-footer">© 2026 SCHOOLVERSE · A RITEX product</footer></main>;
+ {showForm&&canManage&&<form className="sv-record-form sv-notice-form" onSubmit={addStudent}><h2>New student admission</h2><div className="sv-application-row"><label>Admission number<input required maxLength={80} value={admission} onChange={e=>setAdmission(e.target.value)} placeholder="STU-0001"/></label><label>Admission date<input type="date" required value={admissionDate} onChange={e=>setAdmissionDate(e.target.value)}/></label></div><div className="sv-application-row"><label>First name<input required maxLength={100} value={first} onChange={e=>setFirst(e.target.value)}/></label><label>Last name<input maxLength={100} value={last} onChange={e=>setLast(e.target.value)}/></label></div><div className="sv-application-row"><label>Class<select value={classId} onChange={e=>{setClassId(e.target.value);setSectionId("")}}><option value="">Not assigned</option>{classes.map(x=><option value={x.id} key={x.id}>{x.name}</option>)}</select></label><label>Section<select value={sectionId} onChange={e=>setSectionId(e.target.value)}><option value="">Not assigned</option>{sections.filter(x=>x.class_id===classId).map(x=><option value={x.id} key={x.id}>{x.name}</option>)}</select></label></div><div className="sv-application-row"><label>Date of birth<input type="date" value={dob} onChange={e=>setDob(e.target.value)}/></label><label>Student email (optional)<input type="email" value={email} onChange={e=>setEmail(e.target.value)}/></label></div><label>Phone (optional)<input type="tel" value={phone} onChange={e=>setPhone(e.target.value)}/></label><button disabled={saving||!admission.trim()||!first.trim()}>{saving?"Saving…":"Save student admission"}</button></form>}
+ <div className="sv-record-table-wrap"><table className="sv-record-table"><thead><tr><th>Admission no.</th><th>Student name</th><th>Class / Section</th><th>Admission date</th><th>Status</th></tr></thead><tbody>{loading?<tr><td colSpan={5}>Loading student records…</td></tr>:filtered.length===0?<tr><td colSpan={5}>{rows.length===0?"No student records yet. Add your first student when your school admin access is active.":"No matching students found."}</td></tr>:filtered.map(s=><tr key={s.id}><td>{s.admission_number}</td><td>{s.first_name} {s.last_name??""}</td><td>{classes.find(x=>x.id===s.class_id)?.name??"—"}{s.section_id?" / "+(sections.find(x=>x.id===s.section_id)?.name??""):""}</td><td>{s.admission_date}</td><td><span className="sv-record-status">{s.status}</span></td></tr>)}</tbody></table></div><p className="sv-record-footnote"><Users size={15}/> Showing up to 500 student records. Access is enforced by database row-level security.</p></section><footer className="sv-app-footer">© 2026 SCHOOLVERSE · A RITEX product</footer></main>;
 }
