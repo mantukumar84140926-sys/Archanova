@@ -22,7 +22,7 @@ RLS is enabled on all 18 tables. The latest Supabase security and health advisor
 - `/schoolverse/login`: email/password sign-in
 - `/schoolverse/dashboard`: lists active school memberships for the signed-in user
 - `/schoolverse/school/[slug]/[role]`: verified role workspace
-- `/schoolverse/school/[slug]/[role]/students`: live student list and admission form for school admins/principals
+- `/schoolverse/school/[slug]/[role]/students`: live student list and admission form for school admins/principals\n- `/schoolverse/school/[slug]/[role]/staff`: staff directory and employee record creation for school admins/principals
 
 A signup creates an authentication account only. It does not allow a person to create a school, choose a privileged role, or self-assign a school membership. A trusted school/platform administrator must provision the school and membership before the user can access school data.
 
