@@ -33,7 +33,7 @@ export default function SchoolverseLoginPage() {
     {error && <div className="sv-auth-error" role="alert">{error}</div>}
     <form onSubmit={submit} className="sv-auth-form">
       <label>Email address<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@school.com" /></label>
-      <label>Password<input type="password" autoComplete="current-password" required minLength={6} value={password} onChange={e=>setPassword(e.target.value)} placeholder="Your password" /></label>
+      <label>Password<input type="password" autoComplete="current-password" required minLength={6} value={password} onChange={e=>setPassword(e.target.value)} placeholder="Your password" /></label><div className="sv-auth-switch"><Link href="/schoolverse/forgot-password">Forgot password?</Link></div>
       <button disabled={busy}>{busy ? "Signing in…" : "Sign in to SCHOOLVERSE"}</button>
     </form>
     <p className="sv-auth-switch">New to SCHOOLVERSE? <Link href="/schoolverse/signup">Create an account</Link></p>
