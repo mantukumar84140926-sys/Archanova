@@ -74,6 +74,23 @@ export default function PlatformProvisioningPage() {
     setConfigs((old) => ({ ...old, [id]: { ...old[id], [field]: value } }));
   }
 
+  async function review(app:Application,status:"under_review"|"rejected") {
+    if(!token)return;
+    setBusy(app.id);setError("");setMessage("");
+    try {
+      const response=await fetch("/api/schoolverse/provision",{
+        method:"PATCH",
+        headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},
+        body:JSON.stringify({applicationId:app.id,status}),
+      });
+      const result=await response.json();
+      if(!response.ok)throw new Error(result.error??"Could not update application.");
+      setMessage(status==="rejected"?`${app.school_name} application rejected.`:`${app.school_name} marked under review.`);
+      await load(token);
+    } catch(e) { setError(e instanceof Error?e.message:"Could not update application."); }
+    finally { setBusy(""); }
+  }
+
   async function provision(app:Application) {
     const config=configs[app.id];
     if (!config || !token) return;
@@ -113,7 +130,7 @@ export default function PlatformProvisioningPage() {
             <label>Default locale<input value={config.defaultLocale} onChange={e=>updateConfig(app.id,"defaultLocale",e.target.value)}/></label>
             <label>Timezone<input value={config.timezone} onChange={e=>updateConfig(app.id,"timezone",e.target.value)}/></label>
           </div>
-          <button className="sv-record-primary" disabled={busy===app.id||!config.slug||config.currencyCode.length!==3} onClick={()=>provision(app)}>{busy===app.id?"Provisioning…":"Approve & create school"}</button>
+          <div className="sv-record-actions"><button className="sv-secondary" disabled={busy===app.id||app.status==="under_review"} onClick={()=>review(app,"under_review")}>Mark under review</button><button className="sv-secondary" disabled={busy===app.id} onClick={()=>review(app,"rejected")}>Reject</button><button className="sv-record-primary" disabled={busy===app.id||!config.slug||config.currencyCode.length!==3} onClick={()=>provision(app)}>{busy===app.id?"Processing…":"Approve & create school"}</button></div>
           <small className="sv-form-note">This creates the school and its first School Admin membership in one database transaction.</small>
         </article>})}
       </div>}
