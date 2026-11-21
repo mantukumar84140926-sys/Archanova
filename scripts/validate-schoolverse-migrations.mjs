@@ -5,14 +5,14 @@ const directory = join(process.cwd(), "supabase", "migrations");
 const files = (await readdir(directory)).filter((file) => file.endsWith(".sql")).sort();
 const versions = files.map((file) => {
   const match = file.match(/^(\d{14})_([a-z0-9_]+)\.sql$/);
-  if (!match) throw new Error(`Invalid migration filename: ${file}`);
+  if (!match) throw new Error(\`Invalid migration filename: \${file}\`);
   return { version: match[1], file };
 });
 
 const duplicates = versions.filter((item, index) =>
   versions.findIndex((other) => other.version === item.version) !== index,
 );
-if (duplicates.length) throw new Error(`Duplicate migration versions: ${duplicates.map((x) => x.version).join(", ")}`);
+if (duplicates.length) throw new Error(\`Duplicate migration versions: \${duplicates.map((x) => x.version).join(", ")}\`);
 
 const baseline = versions.find((item) => item.version === "20261120172607");
 if (!baseline) throw new Error("The reproducible SCHOOLVERSE baseline migration is missing.");
@@ -26,20 +26,20 @@ const requiredTables = [
   "homework", "school_notices", "exams", "exam_results", "teaching_assignments",
 ];
 for (const table of requiredTables) {
-  if (!new RegExp(`create\s+table\s+public\\.${table}\\b`, "i").test(sql)) {
-    throw new Error(`Baseline is missing table: ${table}`);
+  if (!new RegExp(\`create\\s+table\\s+public\\.\${table}\\b\`, "i").test(sql)) {
+    throw new Error(\`Baseline is missing table: \${table}\`);
   }
 }
-const tableCount = (sql.match(/create\s+table\s+public\\./gi) ?? []).length;
-const rlsCount = (sql.match(/alter\s+table\s+public\\..*enable\s+row\s+level\s+security/gi) ?? []).length;
+const tableCount = (sql.match(/create\s+table\s+public\./gi) ?? []).length;
+const rlsCount = (sql.match(/alter\s+table\s+public\..*enable\s+row\s+level\s+security/gi) ?? []).length;
 const policyCount = (sql.match(/create\s+policy\s/gi) ?? []).length;
-const functionCount = (sql.match(/create\s+or\s+replace\s+function\s+public\\./gi) ?? []).length;
-if (tableCount !== requiredTables.length) throw new Error(`Expected ${requiredTables.length} baseline tables, found ${tableCount}`);
-if (rlsCount !== requiredTables.length) throw new Error(`Expected RLS on all ${requiredTables.length} tables, found ${rlsCount}`);
-if (policyCount < 20) throw new Error(`Baseline has an unexpectedly low policy count: ${policyCount}`);
-if (functionCount < 5) throw new Error(`Baseline is missing critical database functions: ${functionCount}`);
+const functionCount = (sql.match(/create\s+or\s+replace\s+function\s+public\./gi) ?? []).length;
+if (tableCount !== requiredTables.length) throw new Error(\`Expected \${requiredTables.length} baseline tables, found \${tableCount}\`);
+if (rlsCount !== requiredTables.length) throw new Error(\`Expected RLS on all \${requiredTables.length} tables, found \${rlsCount}\`);
+if (policyCount < 20) throw new Error(\`Baseline has an unexpectedly low policy count: \${policyCount}\`);
+if (functionCount < 5) throw new Error(\`Baseline is missing critical database functions: \${functionCount}\`);
 if (!/revoke\s+all\s+on\s+all\s+tables\s+in\s+schema\s+public\s+from\s+anon/i.test(sql)) {
   throw new Error("Baseline must revoke anonymous access to public tables.");
 }
 
-console.log(`Validated ${versions.length} migration files; baseline includes ${tableCount} tables, ${rlsCount} RLS-enabled tables, ${policyCount} policies and ${functionCount} functions.`);
+console.log(\`Validated \${versions.length} migration files; baseline includes \${tableCount} tables, \${rlsCount} RLS-enabled tables, \${policyCount} policies and \${functionCount} functions.\`);
