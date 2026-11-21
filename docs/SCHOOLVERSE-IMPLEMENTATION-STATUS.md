@@ -105,4 +105,4 @@ The timetable SELECT policy was tightened so students and verified guardians see
 - [ ] Confirm platform provisioning rejects non-allowlisted users and does not expose the server secret.
 - [ ] Complete an end-to-end payment receipt test using a real received payment in a non-production test school.
 
-Automated DB policy inspection is not a substitute for these live-user tests. No production test accounts or payment-provider credentials have been supplied, so those checks remain release blockers.
+Automated DB policy inspection is not a substitute for these live-user tests. No production test accounts or payment-provider credentials have been supplied, so those checks remain release blockers. Server APIs for fee payments, school provisioning, staff/student invitations and guardian linking now reject malformed JSON field types with client errors rather than relying on TypeScript-only casts. CI also runs when migration files change in pull requests.
