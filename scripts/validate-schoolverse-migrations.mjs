@@ -18,6 +18,18 @@ const baseline = versions.find((item) => item.version === "20261120172607");
 if (!baseline) throw new Error("The reproducible SCHOOLVERSE baseline migration is missing.");
 if (versions[0]?.version !== baseline.version) throw new Error("The SCHOOLVERSE baseline must be the first migration.");
 
+for (const item of versions) {
+  if (item.version === baseline.version) continue;
+  const content = await readFile(join(directory, item.file), "utf8");
+  const marker = content.match(/^-- Historical migration placeholder: ([a-z0-9_]+) \\((\\d{14})\\)\\.$/m);
+  if (marker && (marker[1] !== item.file.slice(15, -4) || marker[2] !== item.version)) {
+    throw new Error("Historical migration marker does not match filename: " + item.file);
+  }
+  if (marker && !content.includes(baseline.file)) {
+    throw new Error("Historical migration placeholder must point to the canonical baseline: " + item.file);
+  }
+}
+
 const sql = await readFile(join(directory, baseline.file), "utf8");
 const requiredTables = [
   "schools", "school_memberships", "academic_years", "classes", "sections",
