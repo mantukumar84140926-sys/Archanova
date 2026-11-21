@@ -21,7 +21,7 @@ if (versions[0]?.version !== baseline.version) throw new Error("The SCHOOLVERSE 
 for (const item of versions) {
   if (item.version === baseline.version) continue;
   const content = await readFile(join(directory, item.file), "utf8");
-  const marker = content.match(/^-- Historical migration placeholder: ([a-z0-9_]+) \\((\\d{14})\\)\\.$/m);
+  const marker = content.match(/^-- Historical migration placeholder: ([a-z0-9_]+) \((\\d{14})\)\\.$/m);
   if (marker && (marker[1] !== item.file.slice(15, -4) || marker[2] !== item.version)) {
     throw new Error("Historical migration marker does not match filename: " + item.file);
   }
