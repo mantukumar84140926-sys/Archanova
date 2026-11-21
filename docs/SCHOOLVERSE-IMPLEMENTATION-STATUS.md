@@ -96,6 +96,7 @@ The timetable SELECT policy was tightened so students and verified guardians see
 - [ ] Sign in with one test account for each of the six school roles.
 - [ ] Confirm a student cannot read another student's profile, attendance, invoice, payment, homework, result, or timetable.
 - [ ] Confirm a parent can read only students connected through a verified guardian link.
+- [ ] Confirm deactivating a student, parent or staff school membership immediately blocks direct Data API reads for that linked account.
 - [ ] Confirm an unverified guardian has no child-record access.
 - [ ] Confirm a teacher can access only assigned class/section records and cannot issue fee invoices or publish exams.
 - [ ] Confirm an accountant cannot modify attendance, classes, homework, or exam results.
