@@ -18,13 +18,13 @@ export async function POST(request: Request) {
   const actor = authData.user;
   if (authError || !actor || !actor.email_confirmed_at) return json({ error: "Your verified sign-in could not be confirmed." }, 401);
 
-  const body = await request.json().catch(() => null) as { schoolId?: string; staffId?: string; email?: string; role?: string } | null;
+  const body = await request.json().catch(() => null) as { schoolId?: unknown; staffId?: unknown; email?: unknown; role?: unknown } | null;
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  const email = (body?.email ?? "").trim().toLowerCase();
-  const role = body?.role ?? "teacher";
-  const schoolId = body?.schoolId ?? "";
-  const staffId = body?.staffId ?? "";
-  if (!body || !uuid.test(schoolId) || !uuid.test(staffId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || !["teacher", "accountant", "principal"].includes(role)) {
+  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+  const role = body?.role === undefined ? "teacher" : body.role;
+  const schoolId = typeof body?.schoolId === "string" ? body.schoolId : "";
+  const staffId = typeof body?.staffId === "string" ? body.staffId : "";
+  if (!body || !uuid.test(schoolId) || !uuid.test(staffId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || typeof role !== "string" || !["teacher", "accountant", "principal"].includes(role)) {
     return json({ error: "Provide a valid staff record, email and role." }, 400);
   }
 
