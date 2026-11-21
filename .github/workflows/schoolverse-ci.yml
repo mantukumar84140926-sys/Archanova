@@ -8,6 +8,7 @@ on:
       - "app/api/schoolverse/**"
       - "lib/supabase/**"
       - "middleware.ts"
+      - "supabase/migrations/**"
       - "package.json"
       - "tsconfig.json"
       - ".github/workflows/schoolverse-ci.yml"
