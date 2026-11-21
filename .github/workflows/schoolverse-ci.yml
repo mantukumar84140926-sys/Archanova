@@ -9,6 +9,7 @@ on:
       - "lib/supabase/**"
       - "middleware.ts"
       - "supabase/migrations/**"
+      - "scripts/validate-schoolverse-migrations.mjs"
       - "package.json"
       - "tsconfig.json"
       - ".github/workflows/schoolverse-ci.yml"
