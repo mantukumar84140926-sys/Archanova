@@ -36,12 +36,6 @@ export async function POST(request: Request) {
   const { data: student, error: studentError } = await admin.from("students")
     .select("id,school_id,auth_user_id,email").eq("id", studentId).eq("school_id", schoolId).maybeSingle();
   if (studentError || !student) return json({ error: "Student record not found." }, 404);
-  if (student.auth_user_id && student.auth_user_id !== actor.id && student.auth_user_id !== null) {
-    // A student record may only be linked to one login; the intended account is resolved below.
-  }
-  if (student.auth_user_id && student.auth_user_id !== actor.id) {
-    // Do not reveal or reassign the account already attached to this student.
-  }
   if (student.email && student.email.toLowerCase() !== email) return json({ error: "The invitation email must match the student record email. Update the student record first." }, 400);
 
   let user: { id: string } | null = null;
