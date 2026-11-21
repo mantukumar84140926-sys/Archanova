@@ -45,13 +45,19 @@ export async function POST(request: Request) {
   const context = await getPlatformAdmin(request);
   if ("response" in context) return context.response;
   const body = await request.json().catch(() => null) as {
-    applicationId?: string; slug?: string; currencyCode?: string; defaultLocale?: string; timezone?: string;
+    applicationId?: unknown; slug?: unknown; currencyCode?: unknown; defaultLocale?: unknown; timezone?: unknown;
   } | null;
-  const applicationId = body?.applicationId ?? "";
-  const slug = (body?.slug ?? "").trim().toLowerCase();
-  const currencyCode = (body?.currencyCode ?? "").trim().toUpperCase();
-  const defaultLocale = (body?.defaultLocale ?? "en").trim();
-  const timezone = (body?.timezone ?? "UTC").trim();
+  if (!body || typeof body.applicationId !== "string" || typeof body.slug !== "string" ||
+      typeof body.currencyCode !== "string" ||
+      (body.defaultLocale !== undefined && typeof body.defaultLocale !== "string") ||
+      (body.timezone !== undefined && typeof body.timezone !== "string")) {
+    return json({ error: "Provide valid school provisioning details." }, 400);
+  }
+  const applicationId = body.applicationId;
+  const slug = body.slug.trim().toLowerCase();
+  const currencyCode = body.currencyCode.trim().toUpperCase();
+  const defaultLocale = (body.defaultLocale ?? "en").trim();
+  const timezone = (body.timezone ?? "UTC").trim();
 
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(applicationId)) return json({ error: "A valid application ID is required." }, 400);
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) return json({ error: "Use a lowercase school slug with letters, numbers and hyphens." }, 400);
