@@ -92,7 +92,7 @@ The timetable SELECT policy was tightened so students and verified guardians see
 
 ## Release test checklist
 
-- [ ] Run the branch CI lint and production build after the latest commit (the latest branch-head run must be green).
+- [ ] Run `npm run validate:migrations`, branch CI lint and production build after the latest commit (the latest branch-head run must be green).
 - [ ] Sign in with one test account for each of the six school roles.
 - [ ] Confirm a student cannot read another student's profile, attendance, invoice, payment, homework, result, or timetable.
 - [ ] Confirm a parent can read only students connected through a verified guardian link.
