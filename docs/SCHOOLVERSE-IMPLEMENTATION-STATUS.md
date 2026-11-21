@@ -19,7 +19,7 @@
 19 public application tables are present:
 `schools`, `school_memberships`, `academic_years`, `classes`, `sections`, `students`, `staff`, `student_guardians`, `attendance`, `fee_invoices`, `fee_payments`, `audit_logs`, `school_applications`, `timetable_entries`, `homework`, `school_notices`, `exams`, `exam_results`, and `teaching_assignments`.
 
-RLS is enabled on all application tables. Membership provisioning and payment recording are server-only operations. Public signup cannot assign school membership or privileged roles. One user may hold multiple independently authorised roles in the same school (for example, teacher and parent). School provisioning RPC execution is restricted to `service_role`. Teacher access to students, attendance and homework is restricted to linked teaching assignments. Timetable database exclusion constraints prevent class/teacher time overlaps. Fee payment recording is transactional, idempotent, prevents overpayment, updates invoice status and creates a receipt number plus audit event.
+RLS is enabled on all application tables. Membership provisioning and payment recording are server-only operations. Public signup cannot assign school membership or privileged roles. One user may hold multiple independently authorised roles in the same school (for example, teacher and parent). School provisioning RPC execution is restricted to `service_role`. Teacher access to students, attendance and homework is restricted to linked teaching assignments. Timetable database exclusion constraints prevent class/teacher time overlaps. Fee payment recording is transactional, idempotent, prevents overpayment, updates invoice status and creates a receipt number plus audit event. Student, staff and guardian account linking now also runs through service-role-only database transactions, with membership and profile changes committed together and audit events written atomically.
 
 ## Implemented routes
 
@@ -34,11 +34,11 @@ RLS is enabled on all application tables. Membership provisioning and payment re
 - `/schoolverse/school/[slug]/[role]/settings`: school profile, country, currency, locale and timezone configuration
 - `/schoolverse/school/[slug]/[role]/students`: student records and admission with class, section, DOB and contact fields
 - `/schoolverse/school/[slug]/[role]/students/accounts`: student login invitations and account linking
-- `/api/schoolverse/students/link-account`: server-side student account invitation and linking
+- `/api/schoolverse/students/link-account`: server-side student account invitation and atomic account linking
 - `/schoolverse/school/[slug]/[role]/students/guardians`: guardian invitations and school-admin relationship verification
-- `/api/schoolverse/students/guardians`: server-side guardian invitation and verification API
+- `/api/schoolverse/students/guardians`: server-side guardian invitation and verification API; account membership and guardian relationship are created atomically
 - `/schoolverse/school/[slug]/[role]/staff`: staff directory, invitations and teaching assignments
-- `/api/schoolverse/staff/link-account`: verified administrator-only staff invitation/account linking
+- `/api/schoolverse/staff/link-account`: verified administrator-only staff invitation and atomic account linking
 - `/schoolverse/school/[slug]/[role]/attendance`: attendance marking and review
 - `/schoolverse/school/[slug]/[role]/academics`: academic years, current-year selection, classes and sections
 - `/schoolverse/school/[slug]/[role]/timetable`: weekly periods, teachers, sections and database conflict protection
