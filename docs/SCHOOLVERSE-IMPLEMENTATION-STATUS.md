@@ -88,11 +88,11 @@ Configure Supabase Auth Site URL, redirect allowlist and email delivery after th
 | Student | Student portal, own attendance, class homework, timetable, published results, notices, own fee records | Linked student account only |
 | Parent | Parent portal, verified linked child records, attendance, class homework, timetable, published results, notices, fee records | Verified guardian relationship only |
 
-The timetable SELECT policy was tightened so students and verified guardians see only their linked student's class/section periods; teachers see assigned classes/sections; school leaders see school timetable records. The student/parent workspace no longer advertises the full student-directory module or the generic student-record shortcut.
+The timetable SELECT policy was tightened so students and verified guardians see only their linked student's class/section periods; teachers see assigned classes/sections; school leaders see school timetable records. The student/parent workspace no longer advertises the full student-directory module or the generic student-record shortcut. Linked student, guardian and staff SELECT policies now also require the corresponding active school membership, so deactivating a membership revokes direct Data API access as well as workspace access. The timetable table now correctly renders teacher, time and room in their matching columns.
 
 ## Release test checklist
 
-- [ ] Run the branch CI lint and production build after the latest commit.
+- [ ] Run the branch CI lint and production build after the latest commit (the latest branch-head run must be green).
 - [ ] Sign in with one test account for each of the six school roles.
 - [ ] Confirm a student cannot read another student's profile, attendance, invoice, payment, homework, result, or timetable.
 - [ ] Confirm a parent can read only students connected through a verified guardian link.
