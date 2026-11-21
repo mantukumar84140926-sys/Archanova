@@ -75,3 +75,33 @@ Configure Supabase Auth Site URL, redirect allowlist and email delivery after th
 - Supabase Security Advisor and Health Advisor returned no findings after the anonymous-access hardening.
 - Performance Advisor may report unused-index INFO findings while the new tables have little or no production data.
 - GitHub Actions is configured to run `npm install`, `npm run lint` and `npm run build`; verify the latest branch-head run before release.
+
+
+## Role-access verification matrix
+
+| Role | Workspace modules | Data boundary |
+| --- | --- | --- |
+| School Admin | Students, staff, attendance, academics, homework, timetable, notices, fees, exams, settings | Active membership for the selected school |
+| Principal | School operations, academics, timetable, notices, fees, exams, settings | Active membership; finance read access, payment recording remains restricted to School Admin/accountant |
+| Teacher | Assigned-class students, attendance, academics, homework, timetable, notices, exams | Teaching assignment scoped to class/section |
+| Accountant | Student records, notices, fee invoices and receipts | Finance role; no academic write access |
+| Student | Student portal, own attendance, class homework, timetable, published results, notices, own fee records | Linked student account only |
+| Parent | Parent portal, verified linked child records, attendance, class homework, timetable, published results, notices, fee records | Verified guardian relationship only |
+
+The timetable SELECT policy was tightened so students and verified guardians see only their linked student's class/section periods; teachers see assigned classes/sections; school leaders see school timetable records. The student/parent workspace no longer advertises the full student-directory module or the generic student-record shortcut.
+
+## Release test checklist
+
+- [ ] Run the branch CI lint and production build after the latest commit.
+- [ ] Sign in with one test account for each of the six school roles.
+- [ ] Confirm a student cannot read another student's profile, attendance, invoice, payment, homework, result, or timetable.
+- [ ] Confirm a parent can read only students connected through a verified guardian link.
+- [ ] Confirm an unverified guardian has no child-record access.
+- [ ] Confirm a teacher can access only assigned class/section records and cannot issue fee invoices or publish exams.
+- [ ] Confirm an accountant cannot modify attendance, classes, homework, or exam results.
+- [ ] Confirm a principal cannot record fee payments through the payment API.
+- [ ] Confirm a school member from School A cannot access School B by changing the URL, slug, or submitted school ID.
+- [ ] Confirm platform provisioning rejects non-allowlisted users and does not expose the server secret.
+- [ ] Complete an end-to-end payment receipt test using a real received payment in a non-production test school.
+
+Automated DB policy inspection is not a substitute for these live-user tests. No production test accounts or payment-provider credentials have been supplied, so those checks remain release blockers.
