@@ -14,6 +14,8 @@ type Result = { id: string; student_id: string; subject: string; marks_obtained:
 type Timetable = { id: string; subject: string; day_of_week: number; starts_at: string; ends_at: string; room: string | null };
 type Notice = { id: string; title: string; body: string; published_at: string | null; audience: string };
 
+const dayNames = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
 export default function StudentParentPortalPage() {
   const params = useParams<{ slug: string; role: string }>();
   const router = useRouter();
@@ -132,6 +134,12 @@ export default function StudentParentPortalPage() {
         <div className="sv-record-table-wrap"><table className="sv-record-table"><thead><tr><th>Student</th><th>Invoice</th><th>Amount</th><th>Status</th><th>Due date</th></tr></thead><tbody>
           {invoices.length ? invoices.map((invoice)=><tr key={invoice.id}><td>{studentName(invoice.student_id)}</td><td>{invoice.invoice_number}</td><td>{money(Number(invoice.total_minor),invoice.currency_code)}</td><td>{invoice.status}</td><td>{invoice.due_date ?? "—"}</td></tr>) : <tr><td colSpan={5}>No fee invoices found.</td></tr>}
         </tbody></table></div>
+        <h2>Published exam results</h2>
+        <div className="sv-record-table-wrap"><table className="sv-record-table"><thead><tr><th>Student</th><th>Subject</th><th>Marks</th><th>Grade</th></tr></thead><tbody>
+          {results.length ? results.map((result)=><tr key={result.id}><td>{studentName(result.student_id)}</td><td>{result.subject}</td><td>{result.marks_obtained}/{result.max_marks}</td><td>{result.grade ?? "—"}</td></tr>) : <tr><td colSpan={4}>No published exam results available.</td></tr>}
+        </tbody></table></div>
+        <h2>Weekly timetable</h2>
+        <div className="sv-notice-list">{timetable.length ? timetable.map((period)=><article className="sv-app-panel" key={period.id}><div className="sv-notice-meta">{dayNames[period.day_of_week] ?? "School day"} · {period.starts_at.slice(0,5)}–{period.ends_at.slice(0,5)}</div><h2>{period.subject}</h2><small>{period.room ? `Room ${period.room}` : "Room not assigned"}</small></article>) : <div className="sv-app-panel">No timetable periods available for your class.</div>}</div>
         <h2>Published notices</h2>
         <div className="sv-notice-list">{notices.length ? notices.map((notice)=><article className="sv-app-panel" key={notice.id}><div className="sv-notice-meta">{notice.audience} · {notice.published_at ? new Date(notice.published_at).toLocaleDateString() : ""}</div><h2>{notice.title}</h2><p>{notice.body}</p></article>) : <div className="sv-app-panel">No published notices available.</div>}</div>
       </>}
