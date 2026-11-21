@@ -52,6 +52,8 @@ export default function StudentParentPortalPage() {
     const linkedStudents = (studentRows ?? []) as Student[];
     setStudents(linkedStudents);
     const studentIds = linkedStudents.map((student) => student.id);
+    const classIds = Array.from(new Set(linkedStudents.map((student) => student.class_id).filter((id): id is string => Boolean(id))));
+    const sectionIds = Array.from(new Set(linkedStudents.map((student) => student.section_id).filter((id): id is string => Boolean(id))));
     if (studentIds.length === 0) {
       setAttendance([]); setHomework([]); setInvoices([]); setResults([]); setTimetable([]); setNotices([]);
       return;
@@ -62,7 +64,7 @@ export default function StudentParentPortalPage() {
       supabase.from("homework").select("id,title,subject,due_date,class_id,section_id").eq("school_id", school.id).order("created_at", { ascending: false }).limit(20),
       supabase.from("fee_invoices").select("id,student_id,invoice_number,total_minor,currency_code,due_date,status").eq("school_id", school.id).order("created_at", { ascending: false }).limit(30),
       supabase.from("exam_results").select("id,student_id,subject,marks_obtained,max_marks,grade").eq("school_id", school.id).limit(50),
-      supabase.from("timetable_entries").select("id,subject,day_of_week,starts_at,ends_at,room").eq("school_id", school.id).order("day_of_week").order("starts_at").limit(100),
+      supabase.from("timetable_entries").select("id,subject,day_of_week,starts_at,ends_at,room").eq("school_id", school.id).in("class_id", classIds.length ? classIds : ["00000000-0000-0000-0000-000000000000"]).or(sectionIds.length ? `section_id.is.null,section_id.in.(${sectionIds.join(",")})` : "section_id.is.null").order("day_of_week").order("starts_at").limit(100),
       supabase.from("school_notices").select("id,title,body,published_at,audience").eq("school_id", school.id).not("published_at", "is", null).order("published_at", { ascending: false }).limit(10),
     ]);
     const firstError = attendanceRes.error || homeworkRes.error || invoiceRes.error || resultRes.error || timetableRes.error || noticeRes.error;
