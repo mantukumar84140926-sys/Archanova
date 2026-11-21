@@ -56,6 +56,13 @@ export async function POST(request: Request) {
   }
   if (!await isSchoolLeader(ctx.admin, schoolId, ctx.actor.id)) return json({ error: "Only a school administrator or principal can link guardians." }, 403);
 
+  // Validate the target student before creating or inviting any Auth account.
+  // This prevents invalid student IDs from triggering unsolicited invitations.
+  const { data: student, error: studentError } = await ctx.admin.from("students")
+    .select("id,status").eq("id", studentId).eq("school_id", schoolId).maybeSingle();
+  if (studentError || !student) return json({ error: "Student record not found in this school." }, 404);
+  if (student.status !== "active") return json({ error: "Only active students can be linked to a guardian." }, 409);
+
   try {
     let user = await findUser(ctx.admin, email);
     let invited = false;
