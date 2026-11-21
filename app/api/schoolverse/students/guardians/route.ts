@@ -53,12 +53,7 @@ export async function POST(request: Request) {
   if (!body || !uuid.test(schoolId) || !uuid.test(studentId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || relationship.length < 2 || relationship.length > 60) {
     return json({ error: "Provide a valid student, guardian email and relationship." }, 400);
   }
-  if (!await isSchoolLeader(ctx.admin, schoolId, ctx.actor.id)) {
-    return json({ error: "Only a school administrator or principal can link guardians." }, 403);
-  }
-  const { data: student, error: studentError } = await ctx.admin.from("students")
-    .select("id,school_id").eq("id", studentId).eq("school_id", schoolId).maybeSingle();
-  if (studentError || !student) return json({ error: "Student record not found." }, 404);
+  if (!await isSchoolLeader(ctx.admin, schoolId, ctx.actor.id)) return json({ error: "Only a school administrator or principal can link guardians." }, 403);
 
   try {
     let user = await findUser(ctx.admin, email);
@@ -71,13 +66,9 @@ export async function POST(request: Request) {
     }
 
     const { data: guardianLinkId, error: linkError } = await ctx.admin.rpc("link_student_guardian", {
-      p_school_id: schoolId,
-      p_student_id: studentId,
-      p_guardian_user_id: user.id,
-      p_guardian_email: email,
-      p_relationship: relationship,
-      p_is_primary: body.isPrimary === true,
-      p_actor_user_id: ctx.actor.id,
+      p_school_id: schoolId, p_student_id: studentId, p_guardian_user_id: user.id,
+      p_guardian_email: email, p_relationship: relationship,
+      p_is_primary: body.isPrimary === true, p_actor_user_id: ctx.actor.id,
     });
     if (linkError) {
       const conflict = linkError.code === "23505" || /non-active/i.test(linkError.message);
@@ -99,15 +90,14 @@ export async function PATCH(request: Request) {
   if (!body || !uuid.test(schoolId) || !uuid.test(guardianLinkId)) return json({ error: "A valid school and guardian link are required." }, 400);
   if (!await isSchoolLeader(ctx.admin, schoolId, ctx.actor.id)) return json({ error: "Only a school administrator or principal can verify guardians." }, 403);
 
-  const { data, error } = await ctx.admin.from("student_guardians")
-    .update({ verified_at: new Date().toISOString(), verified_by: ctx.actor.id })
-    .eq("id", guardianLinkId).eq("school_id", schoolId).is("verified_at", null).select("id").maybeSingle();
-  if (error) return json({ error: "Could not verify guardian relationship." }, 400);
-  if (!data) return json({ error: "Guardian link was not found or is already verified." }, 404);
-  const { error: auditError } = await ctx.admin.from("audit_logs").insert({
-    school_id: schoolId, actor_user_id: ctx.actor.id, action: "guardian_relationship_verified",
-    entity_type: "student_guardian", entity_id: guardianLinkId,
+  const { error } = await ctx.admin.rpc("verify_student_guardian_link", {
+    p_school_id: schoolId,
+    p_guardian_link_id: guardianLinkId,
+    p_actor_user_id: ctx.actor.id,
   });
-  if (auditError) return json({ error: "Guardian was verified, but the audit event could not be recorded. Contact support." }, 500);
+  if (error) {
+    const notFound = /not found/i.test(error.message);
+    return json({ error: error.message }, notFound ? 404 : 409);
+  }
   return json({ verified: true });
 }
