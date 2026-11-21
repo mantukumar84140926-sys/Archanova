@@ -25,26 +25,28 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => null) as {
-    schoolId?: string; invoiceId?: string; amountMinor?: number;
-    paymentMethod?: string; idempotencyKey?: string; notes?: string;
+    schoolId?: unknown; invoiceId?: unknown; amountMinor?: unknown;
+    paymentMethod?: unknown; idempotencyKey?: unknown; notes?: unknown;
   } | null;
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  const schoolId = body?.schoolId ?? "";
-  const invoiceId = body?.invoiceId ?? "";
+  const schoolId = typeof body?.schoolId === "string" ? body.schoolId : "";
+  const invoiceId = typeof body?.invoiceId === "string" ? body.invoiceId : "";
   if (!body || !uuid.test(schoolId) || !uuid.test(invoiceId)) {
     return json({ error: "A valid school and invoice are required." }, 400);
   }
-  if (!Number.isSafeInteger(body.amountMinor) || (body.amountMinor ?? 0) <= 0) {
+  if (typeof body.amountMinor !== "number" || !Number.isSafeInteger(body.amountMinor) || body.amountMinor <= 0) {
     return json({ error: "Enter a valid payment amount." }, 400);
   }
   const methods = ["cash", "upi", "bank_transfer", "card", "cheque", "other"];
-  if (!methods.includes(body.paymentMethod ?? "")) {
+  if (typeof body.paymentMethod !== "string" || !methods.includes(body.paymentMethod)) {
     return json({ error: "Choose a valid payment method." }, 400);
   }
-  if (!/^[A-Za-z0-9_-]{12,120}$/.test(body.idempotencyKey ?? "")) {
+  if (typeof body.idempotencyKey !== "string" || !/^[A-Za-z0-9_-]{12,120}$/.test(body.idempotencyKey)) {
     return json({ error: "Invalid payment request reference. Please retry." }, 400);
   }
-  if ((body.notes ?? "").length > 500) return json({ error: "Notes must be 500 characters or fewer." }, 400);
+  if (body.notes !== undefined && typeof body.notes !== "string") return json({ error: "Notes must be plain text." }, 400);
+  const notes = typeof body.notes === "string" ? body.notes.trim() : "";
+  if (notes.length > 500) return json({ error: "Notes must be 500 characters or fewer." }, 400);
 
   const admin = createClient(url, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -64,7 +66,7 @@ export async function POST(request: Request) {
     p_payment_method: body.paymentMethod,
     p_idempotency_key: body.idempotencyKey,
     p_received_by: user.id,
-    p_notes: body.notes?.trim() || null,
+    p_notes: notes || null,
   });
   if (paymentError) {
     const conflict = /outstanding|already used|Only issued/i.test(paymentError.message);
