@@ -26,19 +26,19 @@ const requiredTables = [
   "homework", "school_notices", "exams", "exam_results", "teaching_assignments",
 ];
 for (const table of requiredTables) {
-  if (!new RegExp(`create\\s+table\\s+public\\.${table}\\b`, "i").test(sql)) {
+  if (!new RegExp(`create\s+table\s+public\\.${table}\\b`, "i").test(sql)) {
     throw new Error(`Baseline is missing table: ${table}`);
   }
 }
-const tableCount = (sql.match(/create\\s+table\\s+public\\./gi) ?? []).length;
-const rlsCount = (sql.match(/alter\\s+table\\s+public\\..*enable\\s+row\\s+level\\s+security/gi) ?? []).length;
-const policyCount = (sql.match(/create\\s+policy\\s/gi) ?? []).length;
-const functionCount = (sql.match(/create\\s+or\\s+replace\\s+function\\s+public\\./gi) ?? []).length;
+const tableCount = (sql.match(/create\s+table\s+public\\./gi) ?? []).length;
+const rlsCount = (sql.match(/alter\s+table\s+public\\..*enable\s+row\s+level\s+security/gi) ?? []).length;
+const policyCount = (sql.match(/create\s+policy\s/gi) ?? []).length;
+const functionCount = (sql.match(/create\s+or\s+replace\s+function\s+public\\./gi) ?? []).length;
 if (tableCount !== requiredTables.length) throw new Error(`Expected ${requiredTables.length} baseline tables, found ${tableCount}`);
 if (rlsCount !== requiredTables.length) throw new Error(`Expected RLS on all ${requiredTables.length} tables, found ${rlsCount}`);
 if (policyCount < 20) throw new Error(`Baseline has an unexpectedly low policy count: ${policyCount}`);
 if (functionCount < 5) throw new Error(`Baseline is missing critical database functions: ${functionCount}`);
-if (!/revoke\\s+all\\s+on\\s+all\\s+tables\\s+in\\s+schema\\s+public\\s+from\\s+anon/i.test(sql)) {
+if (!/revoke\s+all\s+on\s+all\s+tables\s+in\s+schema\s+public\s+from\s+anon/i.test(sql)) {
   throw new Error("Baseline must revoke anonymous access to public tables.");
 }
 
