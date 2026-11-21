@@ -31,6 +31,7 @@ RLS is enabled on all application tables. Anonymous (`anon`) access to all curre
 - `/schoolverse/platform`: private RITEX application review and school provisioning UI
 - `/api/schoolverse/provision`: allowlisted platform-admin API; creates school and first school-admin membership
 - `/schoolverse/school/[slug]/[role]`: role-aware school workspace
+- `/schoolverse/school/[slug]/[role]/portal`: read-only student/parent dashboard for linked profiles, attendance, homework, fees, published results, timetable and notices
 - `/schoolverse/school/[slug]/[role]/settings`: school profile, country, currency, locale and timezone configuration
 - `/schoolverse/school/[slug]/[role]/students`: student records and admission with class, section, DOB and contact fields
 - `/schoolverse/school/[slug]/[role]/students/accounts`: student login invitations and account linking
