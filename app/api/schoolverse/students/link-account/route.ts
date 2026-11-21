@@ -46,16 +46,16 @@ export async function POST(request: Request) {
     if (user || data.users.length < 1000) break;
   }
 
+  if (student.auth_user_id && (!user || student.auth_user_id !== user.id)) {
+    return json({ error: "This student record is already linked to another login account." }, 409);
+  }
+
   let invited = false;
   if (!user) {
     const { data, error } = await admin.auth.admin.inviteUserByEmail(email);
     if (error || !data.user) return json({ error: error?.message ?? "Could not send student invitation." }, 400);
     user = data.user;
     invited = true;
-  }
-
-  if (student.auth_user_id && student.auth_user_id !== user.id) {
-    return json({ error: "This student record is already linked to another login account." }, 409);
   }
 
   const { error: linkError } = await admin.rpc("link_student_account", {
