@@ -18,11 +18,11 @@ export async function POST(request: Request) {
   const actor = authData.user;
   if (authError || !actor || !actor.email_confirmed_at) return json({ error: "Your verified sign-in could not be confirmed." }, 401);
 
-  const body = await request.json().catch(() => null) as { schoolId?: string; studentId?: string; email?: string } | null;
-  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  const email = (body?.email ?? "").trim().toLowerCase();
-  const schoolId = body?.schoolId ?? "";
-  const studentId = body?.studentId ?? "";
+  const body = await request.json().catch(() => null) as { schoolId?: unknown; studentId?: unknown; email?: unknown } | null;
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i;
+  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+  const schoolId = typeof body?.schoolId === "string" ? body.schoolId : "";
+  const studentId = typeof body?.studentId === "string" ? body.studentId : "";
   if (!body || !uuid.test(schoolId) || !uuid.test(studentId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
     return json({ error: "Provide a valid student and email address." }, 400);
   }
