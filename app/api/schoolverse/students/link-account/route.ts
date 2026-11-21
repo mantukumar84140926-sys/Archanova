@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   if (authError || !actor || !actor.email_confirmed_at) return json({ error: "Your verified sign-in could not be confirmed." }, 401);
 
   const body = await request.json().catch(() => null) as { schoolId?: unknown; studentId?: unknown; email?: unknown } | null;
-  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i;
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
   const schoolId = typeof body?.schoolId === "string" ? body.schoolId : "";
   const studentId = typeof body?.studentId === "string" ? body.studentId : "";
