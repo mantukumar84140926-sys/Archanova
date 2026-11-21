@@ -33,6 +33,9 @@ export async function POST(request: Request) {
     .select("role,status").eq("school_id", schoolId).eq("user_id", actor.id)
     .in("role", ["school_admin", "principal"]).eq("status", "active").limit(1).maybeSingle();
   if (membershipError || !membership) return json({ error: "Only an active school administrator or principal can invite staff." }, 403);
+  if (role === "principal" && membership.role !== "school_admin") {
+    return json({ error: "Only a school administrator can assign the principal login role." }, 403);
+  }
 
   const { data: staff, error: staffError } = await admin.from("staff")
     .select("id,school_id,auth_user_id,email,first_name,last_name,portal_role")
