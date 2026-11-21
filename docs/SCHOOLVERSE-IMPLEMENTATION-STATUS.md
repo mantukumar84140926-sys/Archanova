@@ -69,6 +69,14 @@ Configure Supabase Auth Site URL, redirect allowlist and email delivery after th
 5. A real payment gateway requires the school's merchant account, provider credentials, webhook signing secret and reconciliation rules. The current manual receipt workflow must not be represented as online payment processing.
 6. Production launch still requires cross-school authorization tests, child-data privacy/legal review for each target country, backup/restore rehearsal, monitoring, rate limits and operational support procedures.
 
+## Database migration bootstrap
+
+- The live Supabase project records 33 migration versions. The repository now contains a matching, timestamp-ordered migration file for each version.
+- The first migration is a canonical schema snapshot generated from the verified live database. It creates the final 19-table schema, constraints, indexes, functions, triggers, grants and RLS policies.
+- The remaining 32 files preserve the historical version/name sequence as explicit no-op markers because the original SQL bodies for those already-applied remote migrations were not present in the repository. They point to the canonical baseline, which makes a fresh bootstrap start from the verified final schema before recording the historical versions.
+- The current live project was not reset or modified by this bootstrap repair. A destructive reset or a fresh-project replay has not been run; perform that smoke test in a separate disposable Supabase project before production release.
+- CI validates migration filename ordering, duplicate versions, baseline table/RLS coverage and placeholder filename markers. Future schema changes must be added as real timestamped SQL migrations, not placeholders.
+
 ## Verification
 
 - Verified that `anon` has no table privileges on public application tables; `has_table_privilege` returned false for student reads and fee-payment writes. `authenticated` retains required table privileges, with row access controlled by RLS.
