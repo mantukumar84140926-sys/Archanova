@@ -14,12 +14,9 @@ type Result = { id: string; student_id: string; subject: string; marks_obtained:
 type Timetable = { id: string; subject: string; day_of_week: number; starts_at: string; ends_at: string; room: string | null };
 type Notice = { id: string; title: string; body: string; published_at: string | null; audience: string };
 
-const dayNames = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
 export default function StudentParentPortalPage() {
   const params = useParams<{ slug: string; role: string }>();
   const router = useRouter();
-  const [schoolId, setSchoolId] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [homework, setHomework] = useState<Homework[]>([]);
@@ -32,6 +29,7 @@ export default function StudentParentPortalPage() {
 
   const load = useCallback(async () => {
     setError("");
+    if (!["student", "parent"].includes(params.role)) throw new Error("This dashboard is only available to student and parent accounts.");
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.replace("/schoolverse/login"); return; }
@@ -46,7 +44,6 @@ export default function StudentParentPortalPage() {
     if (schoolError) throw schoolError;
     const school = (schools ?? []).find((item) => (memberships ?? []).some((m) => m.school_id === item.id));
     if (!school) throw new Error("You do not have access to this school.");
-    setSchoolId(school.id);
 
     const { data: studentRows, error: studentsError } = await supabase
       .from("students").select("id,admission_number,first_name,last_name,class_id,section_id")
