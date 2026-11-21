@@ -71,9 +71,9 @@ Configure Supabase Auth Site URL, redirect allowlist and email delivery after th
 
 ## Database migration bootstrap
 
-- The live Supabase project records 33 migration versions. The repository now contains a matching, timestamp-ordered migration file for each version.
+- The live Supabase project records 34 migration versions. The repository now contains a matching, timestamp-ordered migration file for each version.
 - The first migration is a canonical schema snapshot generated from the verified live database. It creates the final 19-table schema, constraints, indexes, functions, triggers, grants and RLS policies.
-- The remaining 32 files preserve the historical version/name sequence as explicit no-op markers because the original SQL bodies for those already-applied remote migrations were not present in the repository. They point to the canonical baseline, which makes a fresh bootstrap start from the verified final schema before recording the historical versions.
+- The remaining 33 files preserve the historical version/name sequence as explicit no-op markers because the original SQL bodies for those already-applied remote migrations were not present in the repository. They point to the canonical baseline, which makes a fresh bootstrap start from the verified final schema before recording the historical versions.
 - The current live project was not reset or modified by this bootstrap repair. A destructive reset or a fresh-project replay has not been run; perform that smoke test in a separate disposable Supabase project before production release.
 - CI validates migration filename ordering, duplicate versions, baseline table/RLS coverage and placeholder filename markers. Future schema changes must be added as real timestamped SQL migrations, not placeholders.
 
