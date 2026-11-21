@@ -43,13 +43,14 @@ export async function POST(request: Request) {
   const ctx = await context(request);
   if ("error" in ctx) return ctx.error;
   const body = await request.json().catch(() => null) as {
-    schoolId?: string; studentId?: string; email?: string; relationship?: string; isPrimary?: boolean;
+    schoolId?: unknown; studentId?: unknown; email?: unknown; relationship?: unknown; isPrimary?: unknown;
   } | null;
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  const email = (body?.email ?? "").trim().toLowerCase();
-  const relationship = (body?.relationship ?? "").trim();
-  const schoolId = body?.schoolId ?? "";
-  const studentId = body?.studentId ?? "";
+  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+  const relationship = typeof body?.relationship === "string" ? body.relationship.trim() : "";
+  const schoolId = typeof body?.schoolId === "string" ? body.schoolId : "";
+  const studentId = typeof body?.studentId === "string" ? body.studentId : "";
+  if (body?.isPrimary !== undefined && typeof body.isPrimary !== "boolean") return json({ error: "Primary guardian must be true or false." }, 400);
   if (!body || !uuid.test(schoolId) || !uuid.test(studentId) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || relationship.length < 2 || relationship.length > 60) {
     return json({ error: "Provide a valid student, guardian email and relationship." }, 400);
   }
@@ -83,10 +84,10 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   const ctx = await context(request);
   if ("error" in ctx) return ctx.error;
-  const body = await request.json().catch(() => null) as { schoolId?: string; guardianLinkId?: string } | null;
+  const body = await request.json().catch(() => null) as { schoolId?: unknown; guardianLinkId?: unknown } | null;
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  const schoolId = body?.schoolId ?? "";
-  const guardianLinkId = body?.guardianLinkId ?? "";
+  const schoolId = typeof body?.schoolId === "string" ? body.schoolId : "";
+  const guardianLinkId = typeof body?.guardianLinkId === "string" ? body.guardianLinkId : "";
   if (!body || !uuid.test(schoolId) || !uuid.test(guardianLinkId)) return json({ error: "A valid school and guardian link are required." }, 400);
   if (!await isSchoolLeader(ctx.admin, schoolId, ctx.actor.id)) return json({ error: "Only a school administrator or principal can verify guardians." }, 403);
 
