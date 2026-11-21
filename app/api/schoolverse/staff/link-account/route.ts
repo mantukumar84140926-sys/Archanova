@@ -49,6 +49,10 @@ export async function POST(request: Request) {
     if (user || data.users.length < 1000) break;
   }
 
+  if (staff.auth_user_id && (!user || staff.auth_user_id !== user.id)) {
+    return json({ error: "This staff record is already linked to another login account." }, 409);
+  }
+
   let invited = false;
   if (!user) {
     const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
@@ -57,9 +61,6 @@ export async function POST(request: Request) {
     if (error || !data.user) return json({ error: error?.message ?? "Could not send the staff invitation." }, 400);
     user = data.user;
     invited = true;
-  }
-  if (staff.auth_user_id && staff.auth_user_id !== user.id) {
-    return json({ error: "This staff record is already linked to another login account." }, 409);
   }
 
   const { error: linkError } = await admin.rpc("link_staff_account", {
