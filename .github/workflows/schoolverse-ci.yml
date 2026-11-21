@@ -16,6 +16,7 @@ on:
   pull_request:
     branches: [schoolverse-foundation]
     paths:
+      - "scripts/validate-schoolverse-migrations.mjs"
       - "app/schoolverse/**"
       - "app/api/schoolverse/**"
       - "lib/supabase/**"
