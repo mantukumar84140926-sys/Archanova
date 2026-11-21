@@ -21,11 +21,19 @@ if (versions[0]?.version !== baseline.version) throw new Error("The SCHOOLVERSE 
 for (const item of versions) {
   if (item.version === baseline.version) continue;
   const content = await readFile(join(directory, item.file), "utf8");
-  const marker = content.match(/^-- Historical migration placeholder: ([a-z0-9_]+) \((\d{14})\)\.$/m);
-  if (!marker) {
-    throw new Error("Historical migration placeholder marker is missing or malformed: " + item.file);
+  const filenameName = item.file.slice(15, -4);
+  const forward = content.match(/^-- Forward migration: ([a-z0-9_]+) \\((\\d{14})\\)\\.$/m);
+  if (forward) {
+    if (forward[1] !== filenameName || forward[2] !== item.version) {
+      throw new Error("Forward migration marker does not match filename: " + item.file);
+    }
+    continue;
   }
-  if (marker[1] !== item.file.slice(15, -4) || marker[2] !== item.version) {
+  const marker = content.match(/^-- Historical migration placeholder: ([a-z0-9_]+) \\((\\d{14})\\)\\.$/m);
+  if (!marker) {
+    throw new Error("Migration must have a valid forward migration or historical placeholder marker: " + item.file);
+  }
+  if (marker[1] !== filenameName || marker[2] !== item.version) {
     throw new Error("Historical migration marker does not match filename: " + item.file);
   }
   if (!content.includes(baseline.file)) {
