@@ -15,6 +15,7 @@ const portals = [
   { icon: BookOpen, title: "Students", detail: "Timetable, homework, attendance and exam results." },
   { icon: Users, title: "Parents", detail: "Track your child’s learning, attendance and fee status." },
   { icon: Wallet, title: "Accountants", detail: "Fee plans, collections, dues and printable receipts." },
+  { icon: ShieldCheck, title: "RITEX Platform Admin", detail: "Review school applications and provision approved school workspaces.", href: "/schoolverse/platform" },
 ];
 
 const modules = [
@@ -64,10 +65,10 @@ export default function SchoolverseHome() {
 
       <section className="sv-audience" id="portals">
         <div className="sv-section-head"><div className="sv-kicker"><span /> ONE GLOBAL PLATFORM, MANY ROLES</div><h2>Everyone has a place<br />in the <em>school community.</em></h2><p>Separate workspaces with permissions tailored to each role.</p></div>
-        <div className="sv-portal-grid">{portals.map((portal) => { const Icon = portal.icon; return <article className="sv-portal-card" key={portal.title}><div className="sv-icon-tile"><Icon size={22} /></div><h3>{portal.title}</h3><p>{portal.detail}</p><span className="sv-card-arrow"><ArrowRight size={16} /></span></article>; })}</div>
+        <div className="sv-portal-grid">{portals.map((portal) => { const Icon = portal.icon; return <Link href={portal.href ?? "/schoolverse/login"} className="sv-portal-card sv-portal-link" aria-label={`Open ${portal.title} sign-in`} key={portal.title}><div className="sv-icon-tile"><Icon size={22} /></div><h3>{portal.title}</h3><p>{portal.detail}</p><span className="sv-card-arrow"><ArrowRight size={16} /></span><span className="sv-card-action">Open portal <ArrowRight size={13} /></span></Link>; })}</div>
       </section>
 
-      <section className="sv-modules" id="modules"><div className="sv-section-head"><div className="sv-kicker"><span /> THE DAILY ESSENTIALS</div><h2>Less paperwork.<br /><em>More progress.</em></h2><p>Core modules designed to work together, from admission to report cards.</p></div><div className="sv-module-grid">{modules.map((module) => { const Icon = module.icon; return <article className="sv-module" key={module.title}><Icon size={21} /><div><h3>{module.title}</h3><p>{module.detail}</p></div></article>; })}</div></section>
+      <section className="sv-modules" id="modules"><div className="sv-section-head"><div className="sv-kicker"><span /> THE DAILY ESSENTIALS</div><h2>Less paperwork.<br /><em>More progress.</em></h2><p>Core modules designed to work together, from admission to report cards.</p></div><div className="sv-module-grid">{modules.map((module) => { const Icon = module.icon; return <Link href="/schoolverse/login" className="sv-module sv-module-link" key={module.title}><Icon size={21} /><div><h3>{module.title}</h3><p>{module.detail}</p></div><ArrowRight className="sv-module-arrow" size={15} /></Link>; })}</div></section>
 
       <section className="sv-security" id="security"><div><div className="sv-kicker"><span /> BUILT FOR SCHOOLS AROUND THE WORLD</div><h2>One platform.<br /><em>Private school data.</em></h2><p>Schools around the world get separate workspaces. Access is controlled by verified school memberships and database-level policies, not just hidden screens.</p></div><div className="sv-security-points"><span><ShieldCheck /> School-wise access controls</span><span><Users /> Role-based permissions</span><span><Building2 /> Separate school records</span></div></section>
 
