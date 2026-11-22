@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AJEDUVERSE — A Universe of Free Learning",
-  description: "Free learning for every student. Explore school, college and competitive exam resources in Hindi and English.",
-  applicationName: "AJEDUVERSE"
+  title: "RITEX — School Management System",
+  description: "RITEX School Management System — manage admissions, students, staff, attendance, fees, exams, homework and parent communication in one secure workspace.",
+  applicationName: "RITEX"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
