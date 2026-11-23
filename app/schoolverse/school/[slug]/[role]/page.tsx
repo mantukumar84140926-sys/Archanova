@@ -22,10 +22,10 @@ export default function SchoolRoleWorkspace(){
  if(live&&selected)setSchool({id:selected.id,name:selected.name});
  }catch(e){if(live)setError(e instanceof Error?e.message:"Unable to open this workspace.");}finally{if(live)setLoading(false);}})();return()=>{live=false};},[params.role,params.slug,router]);
  async function signOut(){const supabase=createClient();await supabase.auth.signOut();router.replace("/schoolverse/login");}
- return <main className="sv-app-shell"><header className="sv-app-header"><Link href="/schoolverse" className="sv-auth-brand">SCHOOL<span>VERSE</span></Link><Link href="/schoolverse/dashboard" className="sv-app-back"><ArrowLeft size={15}/> All workspaces</Link></header>
+ return <main className="sv-app-shell"><header className="sv-app-header"><Link href="/schoolverse" className="sv-auth-brand">RITEX</Link><Link href="/schoolverse/dashboard" className="sv-app-back"><ArrowLeft size={15}/> All workspaces</Link></header>
  <section className="sv-app-content"><div className="sv-kicker"><span/> {labels[params.role]??"SCHOOL WORKSPACE"}</div>
  {loading&&<div className="sv-app-panel">Checking your school access…</div>}
  {error&&<div className="sv-auth-error" role="alert">{error}<p><Link href="/schoolverse/dashboard">Return to dashboard</Link></p></div>}
  {school&&<><h1>{school.name}</h1><p className="sv-auth-intro">{labels[params.role]??params.role} workspace · Secure school-specific access</p><div className="sv-app-panel"><h2>Your school workspace is connected</h2><p>Your school workspace is connected to the live database. Your available modules are shown below. Access is checked again by database policies for every record.</p></div><div className="sv-workspace-grid">{modules.filter(m=>m.roles.includes(params.role)).map(m=>{const Icon=m.icon;return <article className="sv-workspace-card" key={m.name}><div className="sv-icon-tile"><Icon size={22}/></div><h2>{m.name}</h2><p>{m.desc}</p><Link className="sv-module-status" href={`/schoolverse/school/${encodeURIComponent(params.slug)}/${params.role}/${m.href}`}>Open module →</Link></article>})}</div></>}
- </section><footer className="sv-app-footer">© 2026 SCHOOLVERSE · A RITEX product <button onClick={signOut}><LogOut size={14}/> Sign out</button></footer></main>;
+ </section><footer className="sv-app-footer">© 2026 RITEX · A RITEX product <button onClick={signOut}><LogOut size={14}/> Sign out</button></footer></main>;
 }
