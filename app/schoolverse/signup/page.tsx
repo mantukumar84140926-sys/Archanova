@@ -24,7 +24,7 @@ export default function SchoolverseSignupPage() {
     finally{setBusy(false);}
   }
   return <main className="sv-auth-page"><section className="sv-auth-card">
-    <Link href="/schoolverse" className="sv-auth-brand">SCHOOL<span>VERSE</span><small>A RITEX product</small></Link>
+    <Link href="/schoolverse" className="sv-auth-brand">RITEX<small>A RITEX product</small></Link>
     <div className="sv-kicker"><span /> CREATE YOUR ACCOUNT</div><h1>Get started.</h1>
     <p className="sv-auth-intro">Create your secure sign-in. Your school administrator will connect your account to the correct school and role.</p>
     {message&&<div className="sv-auth-notice">{message}</div>}{error&&<div className="sv-auth-error" role="alert">{error}</div>}
@@ -35,6 +35,6 @@ export default function SchoolverseSignupPage() {
       <button disabled={busy}>{busy?"Creating account…":"Create account"}</button>
     </form>
     <p className="sv-auth-switch">Already registered? <Link href="/schoolverse/login">Sign in</Link></p>
-    <Link href="/schoolverse" className="sv-auth-back">← Back to SCHOOLVERSE</Link>
+    <Link href="/schoolverse" className="sv-auth-back">← Back to RITEX</Link>
   </section></main>;
 }
