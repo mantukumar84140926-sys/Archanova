@@ -41,24 +41,17 @@ export async function POST(request: Request) {
   const context = await getSchoolManager(request, body.schoolId);
   if ("response" in context) return context.response;
 
-  const { data: existingMembership, error: membershipError } = await context.admin
-    .from("school_memberships").select("id").eq("school_id", body.schoolId)
-    .eq("status", "active").limit(1);
-  if (membershipError) return json({ error: "Could not verify school membership." }, 500);
-
-  let invitedUserId: string | null = null;
+  // Never silently grant a role to an existing account when an invitation cannot be sent.
+  // Existing-account linking needs a separate, verified acceptance flow.
   const { data: invited, error: inviteError } = await context.admin.auth.admin.inviteUserByEmail(email, {
     redirectTo: new URL("/schoolverse/login", request.url).toString(),
   });
-  if (!inviteError && invited.user) {
-    invitedUserId = invited.user.id;
-  } else {
-    const { data: users, error: usersError } = await context.admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-    if (usersError) return json({ error: inviteError?.message ?? "Could not invite this user." }, 400);
-    const found = users.users.find((item) => item.email?.toLowerCase() === email);
-    if (!found) return json({ error: inviteError?.message ?? "Could not find or invite this user." }, 400);
-    invitedUserId = found.id;
+  if (inviteError || !invited.user) {
+    return json({
+      error: "An invitation could not be sent. If this email already has a RITEX account, ask the account holder to contact the school administrator for a verified account-linking process.",
+    }, 409);
   }
+  const invitedUserId = invited.user.id;
 
   const { data: duplicate, error: duplicateError } = await context.admin.from("school_memberships")
     .select("id").eq("school_id", body.schoolId).eq("user_id", invitedUserId).maybeSingle();
@@ -75,5 +68,5 @@ export async function POST(request: Request) {
     metadata: { invited_email: email, role },
   });
 
-  return json({ invited: true, email, role, message: "Membership created. If this is a new account, check the email invitation to set a password." }, 201);
+  return json({ invited: true, email, role, message: "Invitation sent. Access is assigned to the invited account; the recipient must accept the email invitation before signing in." }, 201);
 }
