@@ -60,11 +60,11 @@ export default function SchoolApplicationPage() {
   }
 
   return <main className="sv-app-shell">
-    <header className="sv-app-header"><Link href="/schoolverse" className="sv-auth-brand">SCHOOL<span>VERSE</span></Link><Link href="/schoolverse/dashboard" className="sv-app-back"><ArrowLeft size={15}/> Dashboard</Link></header>
+    <header className="sv-app-header"><Link href="/schoolverse" className="sv-auth-brand">RITEX</Link><Link href="/schoolverse/dashboard" className="sv-app-back"><ArrowLeft size={15}/> Dashboard</Link></header>
     <section className="sv-app-content sv-form-page">
       <div className="sv-kicker"><span/> SCHOOL ONBOARDING</div>
       <div className="sv-icon-tile"><Building2 size={24}/></div>
-      <h1>Bring your school to SCHOOLVERSE.</h1>
+      <h1>Bring your school to RITEX.</h1>
       <p className="sv-auth-intro">Submit your school details. The platform team will review the request and securely provision the school workspace.</p>
       {loading ? <div className="sv-app-panel">Checking your account…</div> : <form className="sv-record-form sv-application-form" onSubmit={submit}>
         <label>School name<input required minLength={2} maxLength={180} value={schoolName} onChange={e=>setSchoolName(e.target.value)} placeholder="e.g. Sunrise International School"/></label>
@@ -79,6 +79,6 @@ export default function SchoolApplicationPage() {
         <p className="sv-form-note">Submitting an application does not automatically create a school or grant administrator access.</p>
       </form>}
     </section>
-    <footer className="sv-app-footer">© 2026 SCHOOLVERSE · A RITEX product</footer>
+    <footer className="sv-app-footer">© 2026 RITEX · A RITEX product</footer>
   </main>;
 }
