@@ -26,7 +26,7 @@ export default function SchoolverseLoginPage() {
   }
 
   return <main className="sv-auth-page"><section className="sv-auth-card">
-    <Link href="/schoolverse" className="sv-auth-brand">SCHOOL<span>VERSE</span><small>A RITEX product</small></Link>
+    <Link href="/schoolverse" className="sv-auth-brand">RITEX<small>A RITEX product</small></Link>
     <div className="sv-kicker"><span /> SECURE SCHOOL WORKSPACE</div>
     <h1>Welcome back.</h1><p className="sv-auth-intro">Sign in with the email address linked to your school account.</p>
     {notice && <div className="sv-auth-notice">{notice}</div>}
@@ -34,9 +34,9 @@ export default function SchoolverseLoginPage() {
     <form onSubmit={submit} className="sv-auth-form">
       <label>Email address<input type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@school.com" /></label>
       <label>Password<input type="password" autoComplete="current-password" required minLength={6} value={password} onChange={e=>setPassword(e.target.value)} placeholder="Your password" /></label><div className="sv-auth-switch"><Link href="/schoolverse/forgot-password">Forgot password?</Link></div>
-      <button disabled={busy}>{busy ? "Signing in…" : "Sign in to SCHOOLVERSE"}</button>
+      <button disabled={busy}>{busy ? "Signing in…" : "Sign in to RITEX"}</button>
     </form>
-    <p className="sv-auth-switch">New to SCHOOLVERSE? <Link href="/schoolverse/signup">Create an account</Link></p>
-    <Link href="/schoolverse" className="sv-auth-back">← Back to SCHOOLVERSE</Link>
+    <p className="sv-auth-switch">New to RITEX? <Link href="/schoolverse/signup">Create an account</Link></p>
+    <Link href="/schoolverse" className="sv-auth-back">← Back to RITEX</Link>
   </section></main>;
 }
