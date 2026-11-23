@@ -110,7 +110,7 @@ export default function PlatformProvisioningPage() {
   }
 
   return <main className="sv-app-shell">
-    <header className="sv-app-header"><Link href="/schoolverse" className="sv-auth-brand">SCHOOL<span>VERSE</span></Link><Link href="/schoolverse/dashboard" className="sv-app-back"><ArrowLeft size={15}/> Dashboard</Link></header>
+    <header className="sv-app-header"><Link href="/schoolverse" className="sv-auth-brand">RITEX</Link><Link href="/schoolverse/dashboard" className="sv-app-back"><ArrowLeft size={15}/> Dashboard</Link></header>
     <section className="sv-app-content">
       <div className="sv-kicker"><span/> RITEX PLATFORM CONTROL</div>
       <div className="sv-icon-tile"><ShieldCheck size={24}/></div>
@@ -135,6 +135,6 @@ export default function PlatformProvisioningPage() {
         </article>})}
       </div>}
     </section>
-    <footer className="sv-app-footer">© 2026 SCHOOLVERSE · A RITEX product</footer>
+    <footer className="sv-app-footer">© 2026 RITEX · A RITEX product</footer>
   </main>;
 }
